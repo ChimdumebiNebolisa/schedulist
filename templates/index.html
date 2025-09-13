@@ -33,6 +33,7 @@
                             <li class="d-flex justify-content-between align-items-center mb-2">
                                 <div>
                                     <span class="{{ 'text-decoration-line-through' if task.completed else '' }}">{{ task.title }}</span>
+                                    {% if task.deadline %}<small class="text-muted ms-2">{{ task.deadline.strftime('%Y-%m-%d') }}</small>{% endif %}
                                     {% if task.completed %}<span class="badge bg-success ms-2">Done</span>{% endif %}
                                 </div>
                                 <div class="btn-group">
@@ -59,6 +60,7 @@
                             <li class="d-flex justify-content-between align-items-center mb-2">
                                 <div>
                                     <span class="{{ 'text-decoration-line-through' if task.completed else '' }}">{{ task.title }}</span>
+                                    {% if task.deadline %}<small class="text-muted ms-2">{{ task.deadline.strftime('%Y-%m-%d') }}</small>{% endif %}
                                     {% if task.completed %}<span class="badge bg-success ms-2">Done</span>{% endif %}
                                 </div>
                                 <div class="btn-group">
@@ -88,6 +90,7 @@
                             <li class="d-flex justify-content-between align-items-center mb-2">
                                 <div>
                                     <span class="{{ 'text-decoration-line-through' if task.completed else '' }}">{{ task.title }}</span>
+                                    {% if task.deadline %}<small class="text-muted ms-2">{{ task.deadline.strftime('%Y-%m-%d') }}</small>{% endif %}
                                     {% if task.completed %}<span class="badge bg-success ms-2">Done</span>{% endif %}
                                 </div>
                                 <div class="btn-group">
@@ -114,6 +117,7 @@
                             <li class="d-flex justify-content-between align-items-center mb-2">
                                 <div>
                                     <span class="{{ 'text-decoration-line-through' if task.completed else '' }}">{{ task.title }}</span>
+                                    {% if task.deadline %}<small class="text-muted ms-2">{{ task.deadline.strftime('%Y-%m-%d') }}</small>{% endif %}
                                     {% if task.completed %}<span class="badge bg-success ms-2">Done</span>{% endif %}
                                 </div>
                                 <div class="btn-group">
