@@ -20,19 +20,34 @@ automatically when the application starts. To initialize the database
 manually, run:
 
 ```bash
-flask run
+python app.py
+# or
+flask --app app run
 ```
 
 This will generate a `schedulist.db` file in the project directory with the
 required tables.
+
+If you prefer to rely on the Flask CLI's default discovery, set the
+`FLASK_APP` environment variable before running `flask run`:
+
+```bash
+export FLASK_APP=app
+flask run
+```
 
 ## Usage
 
 After installing the dependencies, the application can be started locally once the Flask app is ready:
 
 ```bash
-flask run
+python app.py
+# or
+flask --app app run
 ```
+
+To use the default `flask run` command without `--app`, make sure
+`FLASK_APP` is set as shown above.
 
 Usage will expand as features are implemented.
 
