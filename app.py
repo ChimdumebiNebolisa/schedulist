@@ -1,9 +1,15 @@
 from datetime import datetime
 import os
+
+
+=======
 from functools import wraps
 
 
 =======
+
+=======
+
 
 from flask import Flask, render_template, request, redirect, url_for, session
 from authlib.integrations.flask_client import OAuth
@@ -21,8 +27,8 @@ from models import db, User, Task
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///schedulist.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///schedulist.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = os.environ.get("SECRET_KEY", "dev")
 
 
@@ -51,6 +57,9 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
+@app.route("/")
+=======
 def login_required(f):
     """Decorator to require a logged-in user."""
     @wraps(f)
@@ -63,8 +72,24 @@ def login_required(f):
 
 @app.route('/')
 @login_required
+
 def index():
+
+
+    user_id = session.get("user_id")
+    tasks_by_quadrant = {q: [] for q in range(1, 5)}
+    if user_id:
+        tasks_by_quadrant = {
+            q: Task.query.filter_by(user_id=user_id, quadrant=q).all()
+            for q in range(1, 5)
+        }
+    return render_template(
+        "index.html", tasks=tasks_by_quadrant, user=session.get("user")
+    )
+=======
+=======
     user_id = session["user_id"]
+
     tasks_by_quadrant = {
 
 
@@ -91,6 +116,7 @@ def index():
   
 =======
 
+
 @app.route("/tasks/<int:task_id>/toggle")
 def toggle_task(task_id: int):
     task = Task.query.get_or_404(task_id)
@@ -110,11 +136,23 @@ def authorize():
     token = google.authorize_access_token()
     user_info = google.parse_id_token(token)
 
+
+    # Look up or create user based on Google subject claim
+    user = User.query.filter_by(google_id=user_info["sub"]).first()
+    if user is None:
+        user = User(
+            username=user_info.get("email", user_info["sub"]),
+            google_id=user_info["sub"],
+        )
+        db.session.add(user)
+        db.session.commit()
+=======
     google_id = user_info["sub"]
     email = user_info.get("email")
     user = User.query.filter_by(google_id=google_id).first()
     if not user:
         user = User(google_id=google_id, email=email, username=user_info.get("name"))
+
 =======
     username = user_info.get("email")
     user = User.query.filter_by(username=username).first()
@@ -124,7 +162,13 @@ def authorize():
         db.session.add(user)
         db.session.commit()
     session["user_id"] = user.id
+
     session["user"] = user_info
+
+    session["user_id"] = user.id
+    return redirect(url_for("index"))
+=======
+
 
     user = User.query.filter_by(username=user_info["email"]).first()
     if not user:
@@ -149,6 +193,30 @@ def logout():
 
 
 
+@app.route("/add", methods=["GET", "POST"])
+def add_task():
+    user_id = session.get("user_id")
+    if not user_id:
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        title = request.form["title"]
+        description = request.form.get("description")
+        deadline_str = request.form.get("deadline")
+        quadrant = int(request.form["quadrant"])
+
+        task = Task(
+            title=title,
+            description=description,
+            quadrant=quadrant,
+            user_id=user_id,
+        )
+=======
+
+
+
+
+
 @app.route('/add', methods=['GET', 'POST'])
 @login_required
 def add_task():
@@ -162,15 +230,24 @@ def add_task():
 =======
 
         task = Task(title=title, description=description, quadrant=quadrant, user_id=session["user_id"])
+
         if deadline_str:
-            task.deadline = datetime.strptime(deadline_str, '%Y-%m-%d').date()
+            task.deadline = datetime.strptime(deadline_str, "%Y-%m-%d").date()
 
         db.session.add(task)
         db.session.commit()
-        return redirect(url_for('index'))
+        return redirect(url_for("index"))
 
+
+    return render_template("add_task.html")
+
+=======
     return render_template('add_task.html', user=session.get("user"))
 
+
+
+if __name__ == "__main__":
+=======
 @app.route('/task/<int:task_id>/edit', methods=['GET', 'POST'])
 def edit_task(task_id):
     task = Task.query.get_or_404(task_id)
@@ -200,4 +277,6 @@ def delete_task(task_id):
 
 
 if __name__ == '__main__':
+
     app.run()
+

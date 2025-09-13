@@ -12,8 +12,12 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
+
+    google_id = db.Column(db.String, unique=True, nullable=False)
+=======
     google_id = db.Column(db.String(255), unique=True, nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
+
 
     tasks = db.relationship('Task', backref='user', lazy=True)
 
