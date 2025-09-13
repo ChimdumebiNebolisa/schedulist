@@ -8,21 +8,6 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from app import app, db, google, User
 
 
-@pytest.fixture(autouse=True)
-def clean_db():
-    """Ensure a clean database before each test."""
-    with app.app_context():
-        db.drop_all()
-        db.create_all()
-    yield
-
-
-@pytest.fixture
-def client():
-    app.config["TESTING"] = True
-    return app.test_client()
-
-
 def test_authorize_with_email(client, monkeypatch):
     monkeypatch.setattr(google, "authorize_access_token", lambda: {})
     monkeypatch.setattr(

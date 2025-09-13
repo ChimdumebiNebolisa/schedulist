@@ -3,8 +3,6 @@ import os
 from functools import wraps
 
 
-from flask import Flask, render_template, request, redirect, url_for, session, abort
-=======
 from flask import (
     Flask,
     render_template,
@@ -38,8 +36,6 @@ google = oauth.register(
 )
 
 db.init_app(app)
-with app.app_context():
-    db.create_all()
 
 
 def login_required(f):
@@ -167,5 +163,7 @@ def delete_task(task_id):
 
 
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
     app.run()
 
