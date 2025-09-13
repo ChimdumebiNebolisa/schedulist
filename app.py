@@ -39,11 +39,6 @@ db.init_app(app)
 
 with app.app_context():
     db.create_all()
-    # Create a default user for now until authentication is implemented
-    if not User.query.first():
-        demo = User(username="demo")
-        db.session.add(demo)
-        db.session.commit()
 
 def login_required(f):
     @wraps(f)
@@ -111,10 +106,18 @@ def login():
 def authorize():
     token = google.authorize_access_token()
     user_info = google.parse_id_token(token)
+
+    google_id = user_info["sub"]
+    email = user_info.get("email")
+    user = User.query.filter_by(google_id=google_id).first()
+    if not user:
+        user = User(google_id=google_id, email=email, username=user_info.get("name"))
+=======
     username = user_info.get("email")
     user = User.query.filter_by(username=username).first()
     if not user:
         user = User(username=username)
+
         db.session.add(user)
         db.session.commit()
     session["user_id"] = user.id
@@ -151,6 +154,9 @@ def add_task():
         description = request.form.get('description')
         deadline_str = request.form.get('deadline')
         quadrant = int(request.form['quadrant'])
+
+        user = User.query.get(session['user_id'])
+=======
 
         task = Task(title=title, description=description, quadrant=quadrant, user_id=session["user_id"])
         if deadline_str:
