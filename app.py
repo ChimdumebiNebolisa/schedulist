@@ -2,7 +2,15 @@ from datetime import datetime
 import os
 from functools import wraps
 
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    session,
+    abort,
+)
 from authlib.integrations.flask_client import OAuth
 
 from models import db, User, Task
@@ -71,13 +79,15 @@ def login():
 def authorize():
     token = google.authorize_access_token()
     user_info = google.parse_id_token(token)
-
     user = User.query.filter_by(google_id=user_info["sub"]).first()
     if user is None:
+        email = user_info.get("email")
+        if email is None:
+            abort(400, description="Email claim missing from user info")
         user = User(
-            username=user_info.get("email", user_info["sub"]),
+            username=email,
             google_id=user_info["sub"],
-            email=user_info.get("email"),
+            email=email,
         )
         db.session.add(user)
         db.session.commit()
