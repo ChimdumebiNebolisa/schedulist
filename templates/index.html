@@ -13,6 +13,79 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1 class="text-center">Welcome to Schedulist</h1>
+    <div class="container py-4">
+        <h1 class="text-center mb-4">Welcome to Schedulist</h1>
+        <div class="text-center mb-2">
+            {% if user %}
+                Logged in as {{ user['email'] }} | <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn btn-primary">Login with Google</a>
+            {% endif %}
+        </div>
+        <div class="text-center mb-4">
+            <a href="{{ url_for('add_task') }}" class="btn btn-success">Add Task</a>
+        </div>
+
+        <!-- Eisenhower Matrix Grid -->
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header bg-danger text-white">Urgent &amp; Important</div>
+                    <div class="card-body">
+                        {% for task in tasks[1] %}
+                            <div>{{ task.title }}</div>
+                        {% else %}
+                            <p class="text-muted">No tasks</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header bg-warning text-dark">Not Urgent &amp; Important</div>
+                    <div class="card-body">
+                        {% for task in tasks[2] %}
+                            <div>{{ task.title }}</div>
+                        {% else %}
+                            <p class="text-muted">No tasks</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mt-1">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">Urgent &amp; Not Important</div>
+                    <div class="card-body">
+                        {% for task in tasks[3] %}
+                            <div>{{ task.title }}</div>
+                        {% else %}
+                            <p class="text-muted">No tasks</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header bg-secondary text-white">Not Urgent &amp; Not Important</div>
+                    <div class="card-body">
+                        {% for task in tasks[4] %}
+                            <div>{{ task.title }}</div>
+                        {% else %}
+                            <p class="text-muted">No tasks</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-g8m0MQ0miEJeZVrDCTnhgypKekJy5o+1OtSWT8gKa5IhXCTITVEWilR92qT9bkH3"
+      crossorigin="anonymous"
+    ></script>
 </body>
 </html>
