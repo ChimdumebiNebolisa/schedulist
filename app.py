@@ -2,6 +2,9 @@ from datetime import datetime
 import os
 from functools import wraps
 
+
+=======
+
 from flask import Flask, render_template, request, redirect, url_for, session
 from authlib.integrations.flask_client import OAuth
 
@@ -50,16 +53,33 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def login_required(f):
+    """Decorator to require a logged-in user."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "user_id" not in session:
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 @app.route('/')
 @login_required
 def index():
     user_id = session["user_id"]
     tasks_by_quadrant = {
 
+
         1: Task.query.filter_by(quadrant=1, user_id=user_id).all(),
         2: Task.query.filter_by(quadrant=2, user_id=user_id).all(),
         3: Task.query.filter_by(quadrant=3, user_id=user_id).all(),
         4: Task.query.filter_by(quadrant=4, user_id=user_id).all(),
+=======
+        1: Task.query.filter_by(user_id=session["user_id"], quadrant=1).all(),
+        2: Task.query.filter_by(user_id=session["user_id"], quadrant=2).all(),
+        3: Task.query.filter_by(user_id=session["user_id"], quadrant=3).all(),
+        4: Task.query.filter_by(user_id=session["user_id"], quadrant=4).all(),
+
 =======
         1: Task.query.filter_by(quadrant=1).order_by(Task.deadline).all(),
         2: Task.query.filter_by(quadrant=2).order_by(Task.deadline).all(),
@@ -91,6 +111,13 @@ def login():
 def authorize():
     token = google.authorize_access_token()
     user_info = google.parse_id_token(token)
+    username = user_info.get("email")
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        user = User(username=username)
+        db.session.add(user)
+        db.session.commit()
+    session["user_id"] = user.id
     session["user"] = user_info
 
     user = User.query.filter_by(username=user_info["email"]).first()
