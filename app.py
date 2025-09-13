@@ -3,8 +3,6 @@ import os
 from functools import wraps
 
 
-from flask import Flask, render_template, request, redirect, url_for, session, abort
-=======
 from flask import (
     Flask,
     render_template,
@@ -21,7 +19,9 @@ from models import db, User, Task
 
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///schedulist.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
+    "DATABASE_URL", "sqlite:///schedulist.db"
+)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = os.environ.get("SECRET_KEY", "dev")
 

@@ -15,9 +15,15 @@ Schedulist is a work-in-progress productivity tool designed to help organize and
 
 ## Database Setup
 
-This project uses a SQLite database. The database file is created
-automatically when the application starts. To initialize the database
-manually, run:
+The application reads its database connection string from the
+`DATABASE_URL` environment variable. Provide a PostgreSQL URL such as:
+
+```bash
+export DATABASE_URL="postgresql://user:password@localhost/schedulist"
+```
+
+If `DATABASE_URL` is not set, the app falls back to a local SQLite file
+(`schedulist.db`). To initialize the database manually, run:
 
 ```bash
 python app.py
