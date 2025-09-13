@@ -84,6 +84,25 @@ starting the server:
 
 With those set, navigate to `/login` to initiate the OAuth flow.
 
+## Deployment
+
+Schedulist is deployed on Render at:
+
+https://schedulist.onrender.com
+
+To deploy your own instance on [Render](https://render.com):
+
+1. Create a new **Web Service** and point it at this repository.
+2. Choose a Python environment and set the start command:
+   ```bash
+   gunicorn app:app --bind 0.0.0.0:$PORT
+   ```
+3. Configure the required environment variables:
+   - `SECRET_KEY` – session secret for Flask
+   - `GOOGLE_CLIENT_ID` – OAuth client ID from Google Cloud Console
+   - `GOOGLE_CLIENT_SECRET` – matching client secret
+4. Trigger a deploy. Render will build the service and expose it at a `.onrender.com` URL.
+
 ## Planned Features
 
 - Web interface built with [Flask](https://flask.palletsprojects.com/)
