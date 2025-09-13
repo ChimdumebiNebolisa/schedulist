@@ -23,5 +23,7 @@ class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), nullable=False)
     description = db.Column(db.Text, nullable=True)
+    deadline = db.Column(db.Date, nullable=True)
+    quadrant = db.Column(db.Integer, nullable=False)
     completed = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
