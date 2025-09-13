@@ -4,6 +4,9 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, session
 from authlib.integrations.flask_client import OAuth
 
+=======
+
+
 from models import db, User, Task
 
 
@@ -75,6 +78,9 @@ def logout():
     session.pop("user", None)
     return redirect(url_for("index"))
 
+=======
+
+
 
 
 @app.route('/add', methods=['GET', 'POST'])
@@ -95,6 +101,34 @@ def add_task():
         return redirect(url_for('index'))
 
     return render_template('add_task.html')
+
+
+@app.route('/task/<int:task_id>/edit', methods=['GET', 'POST'])
+def edit_task(task_id):
+    task = Task.query.get_or_404(task_id)
+    if request.method == 'POST':
+        task.title = request.form['title']
+        task.description = request.form.get('description')
+        deadline_str = request.form.get('deadline')
+        task.deadline = (
+            datetime.strptime(deadline_str, '%Y-%m-%d').date()
+            if deadline_str
+            else None
+        )
+        task.quadrant = int(request.form['quadrant'])
+        db.session.commit()
+        return redirect(url_for('index'))
+    return render_template('edit_task.html', task=task)
+
+
+@app.route('/task/<int:task_id>/delete', methods=['GET', 'POST'])
+def delete_task(task_id):
+    task = Task.query.get_or_404(task_id)
+    if request.method == 'POST':
+        db.session.delete(task)
+        db.session.commit()
+        return redirect(url_for('index'))
+    return render_template('delete_task.html', task=task)
 
 
 if __name__ == '__main__':
