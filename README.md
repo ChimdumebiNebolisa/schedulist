@@ -1,8 +1,6 @@
-# schedulist
+# Schedulist
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
-=======
-# Schedulist
 
 Schedulist is a work-in-progress productivity tool designed to help organize and prioritize tasks.
 
