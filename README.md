@@ -45,9 +45,6 @@ flask run
 
 :: or using cmd.exe
 set FLASK_APP=app
-=======
-export FLASK_APP=app
-
 flask run
 ```
 
@@ -67,14 +64,6 @@ To use the default `flask run` command without `--app`, make sure
 
 With the server running, visit `http://127.0.0.1:5000/add` to create a new
 task and view it in the matrix on the home page.
-
-=======
-
-With the server running, visit `http://127.0.0.1:5000/add` to create a new
-task and view it in the matrix on the home page.
-
-=======
-
 
 Usage will expand as features are implemented.
 
