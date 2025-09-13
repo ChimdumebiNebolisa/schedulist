@@ -3,8 +3,6 @@ from datetime import datetime
 import os
 from flask import Flask, render_template, request, redirect, url_for, session
 from authlib.integrations.flask_client import OAuth
-=======
-from flask import Flask, render_template, request, redirect, url_for
 
 from models import db, User, Task
 
@@ -66,8 +64,6 @@ def authorize():
 def logout():
     session.pop("user", None)
     return redirect(url_for("index"))
-=======
-    return render_template("index.html", tasks=tasks_by_quadrant)
 
 
 

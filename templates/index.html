@@ -26,19 +26,6 @@
         <div class="text-center mb-4">
             <a href="{{ url_for('add_task') }}" class="btn btn-success">Add Task</a>
         </div>
-=======
-
-        <div class="text-center mb-4">
-            <a href="{{ url_for('add_task') }}" class="btn btn-success">Add Task</a>
-        </div>
-=======
-
-        <div class="text-center mb-4">
-            <a href="{{ url_for('add_task') }}" class="btn btn-success">Add Task</a>
-        </div>
-=======
-
-
 
         <!-- Eisenhower Matrix Grid -->
         <div class="row g-4">
@@ -46,21 +33,11 @@
                 <div class="card h-100">
                     <div class="card-header bg-danger text-white">Urgent &amp; Important</div>
                     <div class="card-body">
-
-=======
-
-
                         {% for task in tasks[1] %}
                             <div>{{ task.title }}</div>
                         {% else %}
                             <p class="text-muted">No tasks</p>
                         {% endfor %}
-
-=======
-=======
-                        <!-- Tasks for Urgent & Important go here -->
-
-
                     </div>
                 </div>
             </div>
@@ -68,21 +45,11 @@
                 <div class="card h-100">
                     <div class="card-header bg-warning text-dark">Not Urgent &amp; Important</div>
                     <div class="card-body">
-
-=======
-
-
                         {% for task in tasks[2] %}
                             <div>{{ task.title }}</div>
                         {% else %}
                             <p class="text-muted">No tasks</p>
                         {% endfor %}
-
-=======
-=======
-                        <!-- Tasks for Not Urgent & Important go here -->
-
-
                     </div>
                 </div>
             </div>
@@ -93,21 +60,11 @@
                 <div class="card h-100">
                     <div class="card-header bg-primary text-white">Urgent &amp; Not Important</div>
                     <div class="card-body">
-
-=======
-
-
                         {% for task in tasks[3] %}
                             <div>{{ task.title }}</div>
                         {% else %}
                             <p class="text-muted">No tasks</p>
                         {% endfor %}
-
-=======
-=======
-                        <!-- Tasks for Urgent & Not Important go here -->
-
-
                     </div>
                 </div>
             </div>
@@ -115,25 +72,11 @@
                 <div class="card h-100">
                     <div class="card-header bg-secondary text-white">Not Urgent &amp; Not Important</div>
                     <div class="card-body">
-
-=======
-
-
                         {% for task in tasks[4] %}
                             <div>{{ task.title }}</div>
                         {% else %}
                             <p class="text-muted">No tasks</p>
                         {% endfor %}
-
-=======
-=======
-                        <!-- Tasks for Not Urgent & Not Important go here -->
-
-
-                      
-=======
-
-
                     </div>
                 </div>
             </div>
@@ -147,3 +90,4 @@
     ></script>
 </body>
 </html>
+
