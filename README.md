@@ -13,6 +13,19 @@ Schedulist is a work-in-progress productivity tool designed to help organize and
    pip install -r requirements.txt
    ```
 
+## Database Setup
+
+This project uses a SQLite database. The database file is created
+automatically when the application starts. To initialize the database
+manually, run:
+
+```bash
+flask run
+```
+
+This will generate a `schedulist.db` file in the project directory with the
+required tables.
+
 ## Usage
 
 After installing the dependencies, the application can be started locally once the Flask app is ready:
