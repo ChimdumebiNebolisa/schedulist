@@ -32,7 +32,22 @@ If you prefer to rely on the Flask CLI's default discovery, set the
 `FLASK_APP` environment variable before running `flask run`:
 
 ```bash
+
+export FLASK_APP=app   # macOS/Linux
+flask run
+```
+
+On Windows:
+
+```powershell
+$env:FLASK_APP="app"   # PowerShell
+flask run
+
+:: or using cmd.exe
+set FLASK_APP=app
+=======
 export FLASK_APP=app
+
 flask run
 ```
 
@@ -55,7 +70,24 @@ task and view it in the matrix on the home page.
 
 =======
 
+With the server running, visit `http://127.0.0.1:5000/add` to create a new
+task and view it in the matrix on the home page.
+
+=======
+
+
 Usage will expand as features are implemented.
+
+## Google OAuth Setup
+
+To try logging in with Google, set the following environment variables before
+starting the server:
+
+- `SECRET_KEY` – session secret for Flask
+- `GOOGLE_CLIENT_ID` – OAuth client ID from Google Cloud Console
+- `GOOGLE_CLIENT_SECRET` – matching client secret
+
+With those set, navigate to `/login` to initiate the OAuth flow.
 
 ## Planned Features
 
