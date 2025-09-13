@@ -16,6 +16,18 @@
     <div class="container py-4">
         <h1 class="text-center mb-4">Welcome to Schedulist</h1>
 
+        <div class="text-center mb-2">
+            {% if user %}
+                Logged in as {{ user['email'] }} | <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn btn-primary">Login with Google</a>
+            {% endif %}
+        </div>
+        <div class="text-center mb-4">
+            <a href="{{ url_for('add_task') }}" class="btn btn-success">Add Task</a>
+        </div>
+=======
+
         <div class="text-center mb-4">
             <a href="{{ url_for('add_task') }}" class="btn btn-success">Add Task</a>
         </div>
@@ -117,7 +129,11 @@
 =======
                         <!-- Tasks for Not Urgent & Not Important go here -->
 
+
                       
+=======
+
+
                     </div>
                 </div>
             </div>

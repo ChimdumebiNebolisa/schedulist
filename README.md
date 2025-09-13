@@ -78,6 +78,17 @@ task and view it in the matrix on the home page.
 
 Usage will expand as features are implemented.
 
+## Google OAuth Setup
+
+To try logging in with Google, set the following environment variables before
+starting the server:
+
+- `SECRET_KEY` – session secret for Flask
+- `GOOGLE_CLIENT_ID` – OAuth client ID from Google Cloud Console
+- `GOOGLE_CLIENT_SECRET` – matching client secret
+
+With those set, navigate to `/login` to initiate the OAuth flow.
+
 ## Planned Features
 
 - Web interface built with [Flask](https://flask.palletsprojects.com/)
