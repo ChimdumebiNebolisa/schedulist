@@ -5,12 +5,20 @@ from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session
 from authlib.integrations.flask_client import OAuth
 
+=======
+
+=======
+
+
+
 from models import db, User, Task
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///schedulist.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.environ.get("SECRET_KEY", "dev")
+
 
 oauth = OAuth(app)
 google = oauth.register(
@@ -47,13 +55,32 @@ def login_required(f):
 def index():
     user_id = session["user_id"]
     tasks_by_quadrant = {
+
         1: Task.query.filter_by(quadrant=1, user_id=user_id).all(),
         2: Task.query.filter_by(quadrant=2, user_id=user_id).all(),
         3: Task.query.filter_by(quadrant=3, user_id=user_id).all(),
         4: Task.query.filter_by(quadrant=4, user_id=user_id).all(),
+=======
+        1: Task.query.filter_by(quadrant=1).order_by(Task.deadline).all(),
+        2: Task.query.filter_by(quadrant=2).order_by(Task.deadline).all(),
+        3: Task.query.filter_by(quadrant=3).order_by(Task.deadline).all(),
+        4: Task.query.filter_by(quadrant=4).order_by(Task.deadline).all(),
+
     }
 
     return render_template("index.html", tasks=tasks_by_quadrant, user=session.get("user"))
+
+  
+=======
+
+@app.route("/tasks/<int:task_id>/toggle")
+def toggle_task(task_id: int):
+    task = Task.query.get_or_404(task_id)
+    task.completed = not task.completed
+    db.session.commit()
+    return redirect(url_for("index"))
+
+
 
 @app.route("/login")
 def login():
@@ -81,6 +108,14 @@ def logout():
     session.pop("user_id", None)
     return redirect(url_for("index"))
 
+=======
+
+=======
+
+
+
+
+
 @app.route('/add', methods=['GET', 'POST'])
 @login_required
 def add_task():
@@ -99,6 +134,34 @@ def add_task():
         return redirect(url_for('index'))
 
     return render_template('add_task.html', user=session.get("user"))
+
+@app.route('/task/<int:task_id>/edit', methods=['GET', 'POST'])
+def edit_task(task_id):
+    task = Task.query.get_or_404(task_id)
+    if request.method == 'POST':
+        task.title = request.form['title']
+        task.description = request.form.get('description')
+        deadline_str = request.form.get('deadline')
+        task.deadline = (
+            datetime.strptime(deadline_str, '%Y-%m-%d').date()
+            if deadline_str
+            else None
+        )
+        task.quadrant = int(request.form['quadrant'])
+        db.session.commit()
+        return redirect(url_for('index'))
+    return render_template('edit_task.html', task=task)
+
+
+@app.route('/task/<int:task_id>/delete', methods=['GET', 'POST'])
+def delete_task(task_id):
+    task = Task.query.get_or_404(task_id)
+    if request.method == 'POST':
+        db.session.delete(task)
+        db.session.commit()
+        return redirect(url_for('index'))
+    return render_template('delete_task.html', task=task)
+
 
 if __name__ == '__main__':
     app.run()
