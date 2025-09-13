@@ -1,7 +1,10 @@
 from datetime import datetime
-
 import os
 from functools import wraps
+
+
+=======
+
 from flask import Flask, render_template, request, redirect, url_for, session
 from authlib.integrations.flask_client import OAuth
 
@@ -42,6 +45,13 @@ with app.app_context():
         db.session.add(demo)
         db.session.commit()
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "user_id" not in session:
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return decorated_function
 
 def login_required(f):
     """Decorator to require a logged-in user."""
@@ -56,12 +66,20 @@ def login_required(f):
 @app.route('/')
 @login_required
 def index():
+    user_id = session["user_id"]
     tasks_by_quadrant = {
 
+
+        1: Task.query.filter_by(quadrant=1, user_id=user_id).all(),
+        2: Task.query.filter_by(quadrant=2, user_id=user_id).all(),
+        3: Task.query.filter_by(quadrant=3, user_id=user_id).all(),
+        4: Task.query.filter_by(quadrant=4, user_id=user_id).all(),
+=======
         1: Task.query.filter_by(user_id=session["user_id"], quadrant=1).all(),
         2: Task.query.filter_by(user_id=session["user_id"], quadrant=2).all(),
         3: Task.query.filter_by(user_id=session["user_id"], quadrant=3).all(),
         4: Task.query.filter_by(user_id=session["user_id"], quadrant=4).all(),
+
 =======
         1: Task.query.filter_by(quadrant=1).order_by(Task.deadline).all(),
         2: Task.query.filter_by(quadrant=2).order_by(Task.deadline).all(),
@@ -72,6 +90,8 @@ def index():
 
     return render_template("index.html", tasks=tasks_by_quadrant, user=session.get("user"))
 
+  
+=======
 
 @app.route("/tasks/<int:task_id>/toggle")
 def toggle_task(task_id: int):
@@ -81,11 +101,11 @@ def toggle_task(task_id: int):
     return redirect(url_for("index"))
 
 
+
 @app.route("/login")
 def login():
     redirect_uri = url_for("authorize", _external=True)
     return google.authorize_redirect(redirect_uri)
-
 
 @app.route("/login/callback")
 def authorize():
@@ -99,8 +119,15 @@ def authorize():
         db.session.commit()
     session["user_id"] = user.id
     session["user"] = user_info
-    return redirect(url_for("index"))
 
+    user = User.query.filter_by(username=user_info["email"]).first()
+    if not user:
+        user = User(username=user_info["email"])
+        db.session.add(user)
+        db.session.commit()
+
+    session["user_id"] = user.id
+    return redirect(url_for("index"))
 
 @app.route("/logout")
 def logout():
@@ -133,8 +160,7 @@ def add_task():
         db.session.commit()
         return redirect(url_for('index'))
 
-    return render_template('add_task.html')
-
+    return render_template('add_task.html', user=session.get("user"))
 
 @app.route('/task/<int:task_id>/edit', methods=['GET', 'POST'])
 def edit_task(task_id):
