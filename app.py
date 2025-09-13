@@ -1,7 +1,11 @@
 from datetime import datetime
+
 import os
 from flask import Flask, render_template, request, redirect, url_for, session
 from authlib.integrations.flask_client import OAuth
+=======
+from flask import Flask, render_template, request, redirect, url_for
+
 from models import db, User, Task
 
 app = Flask(__name__)
@@ -40,6 +44,7 @@ def index():
         3: Task.query.filter_by(quadrant=3).all(),
         4: Task.query.filter_by(quadrant=4).all(),
     }
+
     return render_template("index.html", tasks=tasks_by_quadrant, user=session.get("user"))
 
 
@@ -61,6 +66,9 @@ def authorize():
 def logout():
     session.pop("user", None)
     return redirect(url_for("index"))
+=======
+    return render_template("index.html", tasks=tasks_by_quadrant)
+
 
 
 @app.route('/add', methods=['GET', 'POST'])
