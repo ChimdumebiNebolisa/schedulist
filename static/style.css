@@ -1,3 +1,11 @@
 body {
   margin: 20px;
 }
+
+.form-section {
+  margin-bottom: 1rem;
+}
+
+.form-actions {
+  margin-top: 1rem;
+}
