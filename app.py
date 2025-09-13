@@ -2,6 +2,9 @@ from datetime import datetime
 import os
 from functools import wraps
 
+
+from flask import Flask, render_template, request, redirect, url_for, session, abort
+=======
 from flask import (
     Flask,
     render_template,
@@ -11,6 +14,7 @@ from flask import (
     session,
     abort,
 )
+
 from authlib.integrations.flask_client import OAuth
 
 from models import db, User, Task
@@ -48,6 +52,14 @@ def login_required(f):
     return decorated_function
 
 
+def get_user_task_or_404(task_id: int) -> Task:
+    """Retrieve a task and ensure it belongs to the logged-in user."""
+    task = Task.query.get_or_404(task_id)
+    if task.user_id != session["user_id"]:
+        abort(404)
+    return task
+
+
 @app.route("/")
 @login_required
 def index():
@@ -63,7 +75,7 @@ def index():
 @app.route("/tasks/<int:task_id>/toggle")
 @login_required
 def toggle_task(task_id: int):
-    task = Task.query.get_or_404(task_id)
+    task = get_user_task_or_404(task_id)
     task.completed = not task.completed
     db.session.commit()
     return redirect(url_for("index"))
@@ -129,7 +141,7 @@ def add_task():
 @app.route("/task/<int:task_id>/edit", methods=["GET", "POST"])
 @login_required
 def edit_task(task_id):
-    task = Task.query.get_or_404(task_id)
+    task = get_user_task_or_404(task_id)
     if request.method == "POST":
         task.title = request.form["title"]
         task.description = request.form.get("description")
@@ -146,7 +158,7 @@ def edit_task(task_id):
 @app.route("/task/<int:task_id>/delete", methods=["GET", "POST"])
 @login_required
 def delete_task(task_id):
-    task = Task.query.get_or_404(task_id)
+    task = get_user_task_or_404(task_id)
     if request.method == "POST":
         db.session.delete(task)
         db.session.commit()
