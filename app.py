@@ -82,16 +82,12 @@ def get_user_task_or_404(task_id: int) -> Task:
 def index():
     user_id = session["user_id"]
     tasks_by_quadrant = {
-
-        q: Task.query.filter_by(user_id=user_id, quadrant=q).all() for q in range(1, 5)
-
         q: (
             Task.query.filter_by(user_id=user_id, quadrant=q)
             .order_by(Task.deadline)
             .all()
         )
         for q in range(1, 5)
-
     }
     return render_template(
         "index.html", tasks=tasks_by_quadrant, user=session.get("user")
@@ -130,11 +126,7 @@ def authorize():
         user = User(
             username=email,
             google_id=user_info["sub"],
-
-            email=user_info.get("email"),
-
             email=email,
-
         )
         db.session.add(user)
         db.session.commit()
