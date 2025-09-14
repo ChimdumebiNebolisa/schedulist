@@ -135,8 +135,17 @@ def login():
 
 @app.route("/login/callback")
 def authorize():
-    token = google.authorize_access_token()
-    user_info = google.parse_id_token(token)
+    try:
+        token = google.authorize_access_token()
+    except Exception as exc:  # pragma: no cover - oauth library error handling
+        logger.exception("Failed to authorize access token: %s", exc)
+        abort(400, description="Failed to authorize access token")
+
+    try:
+        user_info = google.parse_id_token(token)
+    except Exception as exc:  # pragma: no cover - oauth library error handling
+        logger.exception("Failed to parse ID token: %s", exc)
+        abort(500, description="Failed to parse user information")
 
     user = db.session.execute(
         select(User).filter_by(google_id=user_info["sub"])
