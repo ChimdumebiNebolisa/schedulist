@@ -3,12 +3,12 @@ import logging
 import os
 from functools import wraps
 
+
 from typing import Any, cast
 
 
+
 from typing import Any
-
-
 
 from flask import (
     Flask,
@@ -21,6 +21,11 @@ from flask import (
 )
 
 from authlib.integrations.flask_client import OAuth
+
+try:  # pragma: no cover - RemoteApp may be absent in new authlib versions
+    from authlib.integrations.flask_client import RemoteApp
+except ImportError:  # pragma: no cover
+    RemoteApp = Any  # type: ignore
 from dotenv import load_dotenv
 
 from models import db, User, Task
