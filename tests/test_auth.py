@@ -4,18 +4,23 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
-from app import app, google, User
-
 from app import app, db, google, User
 from sqlalchemy import select
 
 
 def test_authorize_with_email(client, monkeypatch):
+    class DummyResp:
+        def __init__(self, data):
+            self._data = data
+
+        def json(self):
+            return self._data
+
     monkeypatch.setattr(google, "authorize_access_token", lambda: {})
     monkeypatch.setattr(
         google,
-        "parse_id_token",
-        lambda token: {"sub": "abc123", "email": "user@example.com"},
+        "get",
+        lambda url: DummyResp({"sub": "abc123", "email": "user@example.com"}),
     )
 
     response = client.get("/login/callback")
@@ -29,8 +34,19 @@ def test_authorize_with_email(client, monkeypatch):
 
 
 def test_authorize_without_email(client, monkeypatch):
+    class DummyResp:
+        def __init__(self, data):
+            self._data = data
+
+        def json(self):
+            return self._data
+
     monkeypatch.setattr(google, "authorize_access_token", lambda: {})
-    monkeypatch.setattr(google, "parse_id_token", lambda token: {"sub": "abc123"})
+    monkeypatch.setattr(
+        google,
+        "get",
+        lambda url: DummyResp({"sub": "abc123"}),
+    )
 
     response = client.get("/login/callback")
     assert response.status_code == 400
@@ -48,13 +64,13 @@ def test_authorize_access_token_error(client, monkeypatch):
     assert b"Failed to authorize access token" in response.data
 
 
-def test_parse_id_token_error(client, monkeypatch):
+def test_userinfo_fetch_error(client, monkeypatch):
     monkeypatch.setattr(google, "authorize_access_token", lambda: {})
 
-    def raise_error(token):  # pragma: no cover - monkeypatched function
+    def raise_error(url):  # pragma: no cover - monkeypatched function
         raise RuntimeError("boom")
 
-    monkeypatch.setattr(google, "parse_id_token", raise_error)
+    monkeypatch.setattr(google, "get", raise_error)
 
     response = client.get("/login/callback")
     assert response.status_code == 500
