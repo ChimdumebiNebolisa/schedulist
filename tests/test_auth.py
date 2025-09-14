@@ -35,3 +35,27 @@ def test_authorize_without_email(client, monkeypatch):
     response = client.get("/login/callback")
     assert response.status_code == 400
     assert b"Email claim missing" in response.data
+
+
+def test_authorize_access_token_error(client, monkeypatch):
+    def raise_error():
+        raise RuntimeError("boom")
+
+    monkeypatch.setattr(google, "authorize_access_token", raise_error)
+
+    response = client.get("/login/callback")
+    assert response.status_code == 400
+    assert b"Failed to authorize access token" in response.data
+
+
+def test_parse_id_token_error(client, monkeypatch):
+    monkeypatch.setattr(google, "authorize_access_token", lambda: {})
+
+    def raise_error(token):  # pragma: no cover - monkeypatched function
+        raise RuntimeError("boom")
+
+    monkeypatch.setattr(google, "parse_id_token", raise_error)
+
+    response = client.get("/login/callback")
+    assert response.status_code == 500
+    assert b"Failed to parse user information" in response.data
