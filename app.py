@@ -3,11 +3,6 @@ import logging
 import os
 from functools import wraps
 
-
-from typing import Any
-
-
-
 from flask import (
     Flask,
     render_template,
@@ -17,14 +12,6 @@ from flask import (
     session,
     abort,
 )
-
-
-
-try:
-    from authlib.integrations.base_client import RemoteApp
-except ImportError:  # pragma: no cover - fallback for older Authlib versions
-    RemoteApp = Any  # type: ignore[assignment]
-
 
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
@@ -48,7 +35,7 @@ except KeyError as exc:
     raise RuntimeError("SECRET_KEY environment variable not set") from exc
 
 oauth = OAuth(app)
-google: RemoteApp = oauth.register(
+google = oauth.register(
     name="google",
     client_id=os.getenv("GOOGLE_CLIENT_ID"),
     client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
@@ -150,7 +137,7 @@ def authorize():
         abort(400, description="Failed to authorize access token")
 
     try:
-        resp = google.get("userinfo")
+        resp = google.get("https://openidconnect.googleapis.com/v1/userinfo")
         user_info = resp.json()
     except Exception as exc:  # pragma: no cover - oauth library error handling
         logger.exception("Failed to fetch user info: %s", exc)
