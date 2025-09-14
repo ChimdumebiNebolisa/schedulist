@@ -3,7 +3,10 @@ import os
 from functools import wraps
 
 
+
+
 from flask import Flask, render_template, request, redirect, url_for, session
+
 
 
 from flask import (
@@ -92,7 +95,9 @@ def index():
 @login_required
 def toggle_task(task_id: int):
 
+
     task = Task.query.filter_by(id=task_id, user_id=session["user_id"]).first_or_404()
+
 
     task = get_user_task_or_404(task_id)
 
@@ -162,7 +167,9 @@ def add_task():
 @login_required
 def edit_task(task_id):
 
+
     task = Task.query.filter_by(id=task_id, user_id=session["user_id"]).first_or_404()
+
 
     task = get_user_task_or_404(task_id)
 
@@ -183,7 +190,9 @@ def edit_task(task_id):
 @login_required
 def delete_task(task_id):
 
+
     task = Task.query.filter_by(id=task_id, user_id=session["user_id"]).first_or_404()
+
 
     task = get_user_task_or_404(task_id)
 
@@ -195,8 +204,6 @@ def delete_task(task_id):
 
 
 if __name__ == "__main__":
-
-
     with app.app_context():
         db.create_all()
 
