@@ -7,6 +7,7 @@ from functools import wraps
 from typing import Any
 
 
+
 from flask import (
     Flask,
     render_template,
@@ -23,6 +24,7 @@ try:
     from authlib.integrations.base_client import RemoteApp
 except ImportError:  # pragma: no cover - fallback for older Authlib versions
     RemoteApp = Any  # type: ignore[assignment]
+
 
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
@@ -53,9 +55,6 @@ google: RemoteApp = oauth.register(
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
     client_kwargs={"scope": "openid email profile"},
 )
-if google is None:
-    raise RuntimeError("Failed to register Google OAuth client")
-assert google is not None
 
 if not google.client_id:
     raise RuntimeError(
