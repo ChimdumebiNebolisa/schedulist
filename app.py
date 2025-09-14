@@ -19,6 +19,7 @@ from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 
 from models import db, User, Task
+from sqlalchemy import select
 
 load_dotenv()
 
@@ -70,7 +71,9 @@ def login_required(f):
 def get_user_task_or_404(task_id: int, current_user: User) -> Task:
     """Retrieve a task and ensure it belongs to the logged-in user."""
     logger.info("User %s requesting task %s", current_user.id, task_id)
-    task = Task.query.get_or_404(task_id)
+    task = db.session.get(Task, task_id)
+    if task is None:
+        abort(404)
     if task.user_id != current_user.id:
         logger.warning(
             "User %s forbidden from task %s owned by %s",
@@ -102,7 +105,9 @@ def index():
 @app.route("/tasks/<int:task_id>/toggle")
 @login_required
 def toggle_task(task_id: int):
-    current_user = User.query.get_or_404(session["user_id"])
+    current_user = db.session.get(User, session["user_id"])
+    if current_user is None:
+        abort(404)
     task = get_user_task_or_404(task_id, current_user)
     task.completed = not task.completed
     db.session.commit()
@@ -124,7 +129,9 @@ def authorize():
     token = google.authorize_access_token()
     user_info = google.parse_id_token(token)
 
-    user = User.query.filter_by(google_id=user_info["sub"]).first()
+    user = db.session.execute(
+        select(User).filter_by(google_id=user_info["sub"])
+    ).scalar_one_or_none()
     if user is None:
         email = user_info.get("email")
         if email is None:
@@ -174,7 +181,9 @@ def add_task():
 @app.route("/task/<int:task_id>/edit", methods=["GET", "POST"])
 @login_required
 def edit_task(task_id):
-    current_user = User.query.get_or_404(session["user_id"])
+    current_user = db.session.get(User, session["user_id"])
+    if current_user is None:
+        abort(404)
     task = get_user_task_or_404(task_id, current_user)
 
     if request.method == "POST":
@@ -193,7 +202,9 @@ def edit_task(task_id):
 @app.route("/task/<int:task_id>/delete", methods=["GET", "POST"])
 @login_required
 def delete_task(task_id):
-    current_user = User.query.get_or_404(session["user_id"])
+    current_user = db.session.get(User, session["user_id"])
+    if current_user is None:
+        abort(404)
     task = get_user_task_or_404(task_id, current_user)
 
     if request.method == "POST":

@@ -1,6 +1,7 @@
 from datetime import date
 
 from models import db, Task, User
+from sqlalchemy import select
 
 
 def test_login_required(client):
@@ -36,7 +37,9 @@ def test_task_crud_operations(logged_in_client, user):
         follow_redirects=False,
     )
     assert resp.status_code == 302
-    task = Task.query.filter_by(title="New", user_id=user.id).first()
+    task = db.session.execute(
+        select(Task).filter_by(title="New", user_id=user.id)
+    ).scalar_one_or_none()
     assert task is not None
 
     # Update
@@ -50,7 +53,7 @@ def test_task_crud_operations(logged_in_client, user):
         },
     )
     assert resp.status_code == 302
-    task = Task.query.get(task.id)
+    task = db.session.get(Task, task.id)
     assert task.title == "Updated"
     assert task.quadrant == 2
     assert task.description == "desc"
@@ -59,10 +62,15 @@ def test_task_crud_operations(logged_in_client, user):
     # Toggle completion
     resp = logged_in_client.get(f"/tasks/{task.id}/toggle")
     assert resp.status_code == 302
-    task = Task.query.get(task.id)
+    task = db.session.get(Task, task.id)
     assert task.completed is True
 
     # Delete
     resp = logged_in_client.post(f"/task/{task.id}/delete")
     assert resp.status_code == 302
+
     assert Task.query.get(task.id) is None
+
+    assert db.session.get(Task, task.id) is None
+
+
