@@ -15,9 +15,15 @@ Schedulist is a work-in-progress productivity tool designed to help organize and
 
 ## Database Setup
 
-This project uses a SQLite database. The database file is created
-automatically when the application starts. To initialize the database
-manually, run:
+The application reads its database connection string from the
+`DATABASE_URL` environment variable. Provide a PostgreSQL URL such as:
+
+```bash
+export DATABASE_URL="postgresql://user:password@localhost/schedulist"
+```
+
+If `DATABASE_URL` is not set, the app falls back to a local SQLite file
+(`schedulist.db`). To initialize the database manually, run:
 
 ```bash
 python app.py
@@ -77,6 +83,25 @@ To try logging in with Google, copy `.env.example` to `.env` and fill in:
 
 The application loads these values automatically using [python-dotenv](https://saurabh-kumar.com/python-dotenv). After
 the file is created, navigate to `/login` to initiate the OAuth flow.
+
+## Deployment
+
+Schedulist is deployed on Render at:
+
+https://schedulist.onrender.com
+
+To deploy your own instance on [Render](https://render.com):
+
+1. Create a new **Web Service** and point it at this repository.
+2. Choose a Python environment and set the start command:
+   ```bash
+   gunicorn app:app --bind 0.0.0.0:$PORT
+   ```
+3. Configure the required environment variables:
+   - `SECRET_KEY` – session secret for Flask
+   - `GOOGLE_CLIENT_ID` – OAuth client ID from Google Cloud Console
+   - `GOOGLE_CLIENT_SECRET` – matching client secret
+4. Trigger a deploy. Render will build the service and expose it at a `.onrender.com` URL.
 
 ## Planned Features
 
