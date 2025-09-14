@@ -133,13 +133,13 @@ def toggle_task(task_id: int):
 @app.route("/login")
 def login():
     redirect_uri = url_for("authorize", _external=True)
-    return oauth.google.authorize_redirect(redirect_uri)
+    return google.authorize_redirect(redirect_uri)
 
 
 @app.route("/login/callback")
 def authorize():
-    token = oauth.google.authorize_access_token()
-    user_info = oauth.google.parse_id_token(token)
+    token = google.authorize_access_token()
+    user_info = google.parse_id_token(token)
 
     user = db.session.execute(
         select(User).filter_by(google_id=user_info["sub"])
