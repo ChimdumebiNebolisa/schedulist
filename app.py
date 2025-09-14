@@ -1,4 +1,5 @@
 from datetime import datetime
+import logging
 import os
 from functools import wraps
 
@@ -6,6 +7,7 @@ from functools import wraps
 
 
 from flask import Flask, render_template, request, redirect, url_for, session
+
 
 
 
@@ -26,6 +28,9 @@ from dotenv import load_dotenv
 from models import db, User, Task
 
 load_dotenv()
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
@@ -52,6 +57,14 @@ with app.app_context():
     db.create_all()
 
 
+
+@app.errorhandler(403)
+def forbidden(_):
+    return render_template("403.html"), 403
+
+
+
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -67,9 +80,17 @@ def login_required(f):
 
 def get_user_task_or_404(task_id: int) -> Task:
     """Retrieve a task and ensure it belongs to the logged-in user."""
+    user_id = session.get("user_id")
+    logger.info("User %s requesting task %s", user_id, task_id)
     task = Task.query.get_or_404(task_id)
-    if task.user_id != session["user_id"]:
-        abort(404)
+    if task.user_id != user_id:
+        logger.warning(
+            "User %s forbidden from task %s owned by %s",
+            user_id,
+            task_id,
+            task.user_id,
+        )
+        abort(403)
     return task
 
 
@@ -96,7 +117,9 @@ def index():
 def toggle_task(task_id: int):
 
 
+
     task = Task.query.filter_by(id=task_id, user_id=session["user_id"]).first_or_404()
+
 
 
     task = get_user_task_or_404(task_id)
@@ -167,11 +190,16 @@ def add_task():
 @login_required
 def edit_task(task_id):
 
+    task = get_user_task_or_404(task_id)
+
+
+
 
     task = Task.query.filter_by(id=task_id, user_id=session["user_id"]).first_or_404()
 
 
     task = get_user_task_or_404(task_id)
+
 
     if request.method == "POST":
         task.title = request.form["title"]
@@ -190,11 +218,16 @@ def edit_task(task_id):
 @login_required
 def delete_task(task_id):
 
+    task = get_user_task_or_404(task_id)
+
+
+
 
     task = Task.query.filter_by(id=task_id, user_id=session["user_id"]).first_or_404()
 
 
     task = get_user_task_or_404(task_id)
+
 
     if request.method == "POST":
         db.session.delete(task)
@@ -206,6 +239,8 @@ def delete_task(task_id):
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
+
+
 
     app.run()
 

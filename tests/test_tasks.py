@@ -13,7 +13,7 @@ def test_login_required(client):
 
 
 def test_tasks_limited_to_session_user(client, app):
-    """Accessing another user's task should return 404."""
+    """Accessing another user's task should return 403."""
     user1 = User(username="u1@example.com", google_id="gid1", email="u1@example.com")
     user2 = User(username="u2@example.com", google_id="gid2", email="u2@example.com")
     db.session.add_all([user1, user2])
@@ -26,7 +26,7 @@ def test_tasks_limited_to_session_user(client, app):
         sess["user_id"] = user2.id
 
     resp = client.get(f"/tasks/{task.id}/toggle")
-    assert resp.status_code == 404
+    assert resp.status_code == 403
 
 
 def test_task_crud_operations(logged_in_client, user):
