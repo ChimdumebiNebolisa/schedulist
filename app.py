@@ -31,7 +31,10 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
     "DATABASE_URL", "sqlite:///schedulist.db"
 )
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.secret_key = os.getenv("SECRET_KEY", "dev")
+try:
+    app.secret_key = os.environ["SECRET_KEY"]
+except KeyError as exc:
+    raise RuntimeError("SECRET_KEY environment variable not set") from exc
 
 oauth = OAuth(app)
 google = oauth.register(
