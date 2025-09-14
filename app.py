@@ -50,6 +50,8 @@ google = oauth.register(
     userinfo_endpoint="https://openidconnect.googleapis.com/v1/userinfo",
     client_kwargs={"scope": "openid email profile"},
 )
+if google is None:
+    raise RuntimeError("Failed to register Google OAuth client")
 
 db.init_app(app)
 
@@ -116,12 +118,6 @@ def index():
 @login_required
 def toggle_task(task_id: int):
 
-
-
-    task = Task.query.filter_by(id=task_id, user_id=session["user_id"]).first_or_404()
-
-
-
     task = get_user_task_or_404(task_id)
 
     task.completed = not task.completed
@@ -132,11 +128,15 @@ def toggle_task(task_id: int):
 @app.route("/login")
 def login():
     redirect_uri = url_for("authorize", _external=True)
+    if google is None:
+        abort(500, description="OAuth client not configured")
     return google.authorize_redirect(redirect_uri)
 
 
 @app.route("/login/callback")
 def authorize():
+    if google is None:
+        abort(500, description="OAuth client not configured")
     token = google.authorize_access_token()
     user_info = google.parse_id_token(token)
 
