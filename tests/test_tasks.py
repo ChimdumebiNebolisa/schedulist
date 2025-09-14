@@ -79,3 +79,26 @@ def test_task_crud_operations(logged_in_client, user):
     assert db.session.get(Task, task.id) is None
 
 
+def test_add_task_invalid_deadline(logged_in_client):
+    resp = logged_in_client.post(
+        "/add",
+        data={"title": "Bad", "quadrant": "1", "deadline": "not-a-date"},
+    )
+    assert resp.status_code == 400
+    assert b"Invalid date format" in resp.data
+    assert Task.query.filter_by(title="Bad").first() is None
+
+
+def test_edit_task_invalid_deadline(logged_in_client, user):
+    task = Task(title="T", quadrant=1, user_id=user.id)
+    db.session.add(task)
+    db.session.commit()
+    resp = logged_in_client.post(
+        f"/task/{task.id}/edit",
+        data={"title": "T", "quadrant": "1", "deadline": "not-a-date"},
+    )
+    assert resp.status_code == 400
+    assert b"Invalid date format" in resp.data
+    db.session.refresh(task)
+    assert task.deadline is None
+

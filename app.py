@@ -183,7 +183,16 @@ def add_task():
             user_id=session["user_id"],
         )
         if deadline_str:
-            task.deadline = datetime.strptime(deadline_str, "%Y-%m-%d").date()
+            try:
+                task.deadline = datetime.strptime(deadline_str, "%Y-%m-%d").date()
+            except ValueError:
+                error = "Invalid date format. Please use YYYY-MM-DD."
+                return (
+                    render_template(
+                        "add_task.html", error=error, user=session.get("user")
+                    ),
+                    400,
+                )
         db.session.add(task)
         db.session.commit()
         return redirect(url_for("index"))
@@ -202,9 +211,22 @@ def edit_task(task_id):
         task.title = request.form["title"]
         task.description = request.form.get("description")
         deadline_str = request.form.get("deadline")
-        task.deadline = (
-            datetime.strptime(deadline_str, "%Y-%m-%d").date() if deadline_str else None
-        )
+        if deadline_str:
+            try:
+                task.deadline = datetime.strptime(deadline_str, "%Y-%m-%d").date()
+            except ValueError:
+                error = "Invalid date format. Please use YYYY-MM-DD."
+                return (
+                    render_template(
+                        "edit_task.html",
+                        task=task,
+                        error=error,
+                        user=session.get("user"),
+                    ),
+                    400,
+                )
+        else:
+            task.deadline = None
         task.quadrant = int(request.form["quadrant"])
         db.session.commit()
         return redirect(url_for("index"))
