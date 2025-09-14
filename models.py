@@ -1,5 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
 
+# Initialize SQLAlchemy instance
+# This will be initialized in app.py
+
 db = SQLAlchemy()
 
 
@@ -10,8 +13,9 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
+
     google_id = db.Column(db.String(255), unique=True, nullable=False)
-    email = db.Column(db.String(255), unique=True, nullable=False)
+    email = db.Column(db.String(255), unique=True, nullable=True)
 
     tasks = db.relationship("Task", backref="user", lazy=True)
 

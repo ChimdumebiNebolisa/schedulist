@@ -3,13 +3,6 @@ import logging
 import os
 from functools import wraps
 
-
-from typing import Any, cast
-
-
-
-from typing import Any
-
 from flask import (
     Flask,
     render_template,
@@ -20,22 +13,20 @@ from flask import (
     abort,
 )
 
-from authlib.integrations.flask_client import OAuth
-
-try:  # pragma: no cover - RemoteApp may be absent in new authlib versions
-    from authlib.integrations.flask_client import RemoteApp
-except ImportError:  # pragma: no cover
-    RemoteApp = Any  # type: ignore
+from authlib.integrations.flask_client import OAuth, RemoteApp
 from dotenv import load_dotenv
 
 from models import db, User, Task
 from sqlalchemy import select
 
+# Load environment variables
 load_dotenv()
 
+# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Flask app setup
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
     "DATABASE_URL", "sqlite:///schedulist.db"
@@ -46,16 +37,9 @@ try:
 except KeyError as exc:
     raise RuntimeError("SECRET_KEY environment variable not set") from exc
 
+# OAuth setup
 oauth = OAuth(app)
-
-google = oauth.register(
-
-
-google: Any = oauth.register(
-
-google = oauth.register(
-
-
+google: RemoteApp = oauth.register(
     name="google",
     client_id=os.getenv("GOOGLE_CLIENT_ID"),
     client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
@@ -63,11 +47,7 @@ google = oauth.register(
     client_kwargs={"scope": "openid email profile"},
 )
 
-if google is None:
-    raise RuntimeError("Failed to register Google OAuth client")
-
-google = cast(Any, google)
-
+# Runtime checks for env variables
 if not google.client_id:
     raise RuntimeError(
         "GOOGLE_CLIENT_ID is missing. Set the GOOGLE_CLIENT_ID environment variable or provide it in a .env file."
@@ -78,6 +58,7 @@ if not google.client_secret:
         "GOOGLE_CLIENT_SECRET is missing. Set the GOOGLE_CLIENT_SECRET environment variable or provide it in a .env file."
     )
 
+# Initialize DB
 db.init_app(app)
 
 
@@ -162,7 +143,7 @@ def authorize():
         abort(400, description="Failed to authorize access token")
 
     try:
-        resp = google.get("https://openidconnect.googleapis.com/v1/userinfo")
+        resp = google.get("userinfo")
         user_info = resp.json()
     except Exception as exc:  # pragma: no cover - oauth library error handling
         logger.exception("Failed to fetch user info: %s", exc)
