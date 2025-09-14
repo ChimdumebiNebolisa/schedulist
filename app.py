@@ -2,7 +2,9 @@ from datetime import datetime
 import logging
 import os
 from functools import wraps
+
 from typing import Any
+
 
 from flask import (
     Flask,
@@ -36,7 +38,11 @@ except KeyError as exc:
     raise RuntimeError("SECRET_KEY environment variable not set") from exc
 
 oauth = OAuth(app)
+
 google: Any = oauth.register(
+
+google = oauth.register(
+
     name="google",
     client_id=os.getenv("GOOGLE_CLIENT_ID"),
     client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
