@@ -3,6 +3,11 @@ import logging
 import os
 from functools import wraps
 
+
+from typing import Any
+
+
+
 from flask import (
     Flask,
     render_template,
@@ -12,6 +17,14 @@ from flask import (
     session,
     abort,
 )
+
+
+
+try:
+    from authlib.integrations.base_client import RemoteApp
+except ImportError:  # pragma: no cover - fallback for older Authlib versions
+    RemoteApp = Any  # type: ignore[assignment]
+
 
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
@@ -35,7 +48,7 @@ except KeyError as exc:
     raise RuntimeError("SECRET_KEY environment variable not set") from exc
 
 oauth = OAuth(app)
-google = oauth.register(
+google: RemoteApp = oauth.register(
     name="google",
     client_id=os.getenv("GOOGLE_CLIENT_ID"),
     client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
