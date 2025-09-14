@@ -16,7 +16,7 @@ Schedulist is a work-in-progress productivity tool designed to help organize and
    ```
 5. Start the development server:
    ```bash
-   flask run
+   flask --app app run
    ```
 
 ## Database Setup
