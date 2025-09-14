@@ -3,7 +3,6 @@ import logging
 import os
 from functools import wraps
 
-
 from flask import (
     Flask,
     render_template,
@@ -13,7 +12,6 @@ from flask import (
     session,
     abort,
 )
-
 
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
@@ -44,9 +42,6 @@ google = oauth.register(
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
     client_kwargs={"scope": "openid email profile"},
 )
-if google is None:
-    raise RuntimeError("Failed to register Google OAuth client")
-assert google is not None
 
 if not google.client_id:
     raise RuntimeError(
@@ -136,15 +131,16 @@ def login():
 @app.route("/login/callback")
 def authorize():
     try:
-        token = google.authorize_access_token()
+        google.authorize_access_token()
     except Exception as exc:  # pragma: no cover - oauth library error handling
         logger.exception("Failed to authorize access token: %s", exc)
         abort(400, description="Failed to authorize access token")
 
     try:
-        user_info = google.parse_id_token(token)
+        resp = google.get("userinfo")
+        user_info = resp.json()
     except Exception as exc:  # pragma: no cover - oauth library error handling
-        logger.exception("Failed to parse ID token: %s", exc)
+        logger.exception("Failed to fetch user info: %s", exc)
         abort(500, description="Failed to parse user information")
 
     user = db.session.execute(
