@@ -17,7 +17,11 @@ class User(db.Model):
 
     email = db.Column(db.String(255), unique=True, nullable=True)
 
+
+    email = db.Column(db.String(255), unique=True, nullable=True)
+
     email = db.Column(db.String(255), unique=True, nullable=False)
+
 
 
     tasks = db.relationship('Task', backref='user', lazy=True)
