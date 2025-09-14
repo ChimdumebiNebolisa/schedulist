@@ -150,7 +150,7 @@ def authorize():
         abort(400, description="Failed to authorize access token")
 
     try:
-        resp = google.get("userinfo")
+        resp = google.get("https://openidconnect.googleapis.com/v1/userinfo")
         user_info = resp.json()
     except Exception as exc:  # pragma: no cover - oauth library error handling
         logger.exception("Failed to fetch user info: %s", exc)
