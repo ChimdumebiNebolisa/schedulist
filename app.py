@@ -2,7 +2,7 @@ from datetime import datetime
 import logging
 import os
 from functools import wraps
-
+from typing import Any
 
 from flask import (
     Flask,
@@ -15,6 +15,10 @@ from flask import (
 )
 
 
+try:
+    from authlib.integrations.base_client import RemoteApp
+except ImportError:  # pragma: no cover - fallback for older Authlib versions
+    RemoteApp = Any  # type: ignore[assignment]
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 
@@ -37,7 +41,7 @@ except KeyError as exc:
     raise RuntimeError("SECRET_KEY environment variable not set") from exc
 
 oauth = OAuth(app)
-google = oauth.register(
+google: RemoteApp = oauth.register(
     name="google",
     client_id=os.getenv("GOOGLE_CLIENT_ID"),
     client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
@@ -136,15 +140,16 @@ def login():
 @app.route("/login/callback")
 def authorize():
     try:
-        token = google.authorize_access_token()
+        google.authorize_access_token()
     except Exception as exc:  # pragma: no cover - oauth library error handling
         logger.exception("Failed to authorize access token: %s", exc)
         abort(400, description="Failed to authorize access token")
 
     try:
-        user_info = google.parse_id_token(token)
+        resp = google.get("userinfo")
+        user_info = resp.json()
     except Exception as exc:  # pragma: no cover - oauth library error handling
-        logger.exception("Failed to parse ID token: %s", exc)
+        logger.exception("Failed to fetch user info: %s", exc)
         abort(500, description="Failed to parse user information")
 
     user = db.session.execute(
