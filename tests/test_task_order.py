@@ -43,7 +43,7 @@ def test_tasks_ordered_and_deadline_displayed(client):
         sess["user_id"] = user_id
         sess["user"] = {"email": "user@example.com"}
 
-    response = client.get("/")
+    response = client.get("/dashboard")
     assert response.status_code == 200
     text = response.get_data(as_text=True)
     assert "2023-01-01" in text
