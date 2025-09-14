@@ -2,11 +2,7 @@ from datetime import datetime
 import logging
 import os
 from functools import wraps
-
-
 from typing import Any
-
-
 
 from flask import (
     Flask,
@@ -18,15 +14,12 @@ from flask import (
     abort,
 )
 
-
-
-try:
-    from authlib.integrations.base_client import RemoteApp
-except ImportError:  # pragma: no cover - fallback for older Authlib versions
-    RemoteApp = Any  # type: ignore[assignment]
-
-
 from authlib.integrations.flask_client import OAuth
+
+try:  # pragma: no cover - RemoteApp may be absent in new authlib versions
+    from authlib.integrations.flask_client import RemoteApp
+except ImportError:  # pragma: no cover
+    RemoteApp = Any  # type: ignore
 from dotenv import load_dotenv
 
 from models import db, User, Task
@@ -150,7 +143,7 @@ def authorize():
         abort(400, description="Failed to authorize access token")
 
     try:
-        resp = google.get("userinfo")
+        resp = google.get("https://openidconnect.googleapis.com/v1/userinfo")
         user_info = resp.json()
     except Exception as exc:  # pragma: no cover - oauth library error handling
         logger.exception("Failed to fetch user info: %s", exc)
