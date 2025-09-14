@@ -6,11 +6,6 @@ from functools import wraps
 
 
 
-from flask import Flask, render_template, request, redirect, url_for, session
-
-
-
-
 from flask import (
     Flask,
     render_template,
@@ -77,18 +72,14 @@ def login_required(f):
     return decorated_function
 
 
-
-
-
-def get_user_task_or_404(task_id: int) -> Task:
+def get_user_task_or_404(task_id: int, current_user: User) -> Task:
     """Retrieve a task and ensure it belongs to the logged-in user."""
-    user_id = session.get("user_id")
-    logger.info("User %s requesting task %s", user_id, task_id)
+    logger.info("User %s requesting task %s", current_user.id, task_id)
     task = Task.query.get_or_404(task_id)
-    if task.user_id != user_id:
+    if task.user_id != current_user.id:
         logger.warning(
             "User %s forbidden from task %s owned by %s",
-            user_id,
+            current_user.id,
             task_id,
             task.user_id,
         )
@@ -117,9 +108,8 @@ def index():
 @app.route("/tasks/<int:task_id>/toggle")
 @login_required
 def toggle_task(task_id: int):
-
-    task = get_user_task_or_404(task_id)
-
+    current_user = User.query.get_or_404(session["user_id"])
+    task = get_user_task_or_404(task_id, current_user)
     task.completed = not task.completed
     db.session.commit()
     return redirect(url_for("index"))
@@ -189,17 +179,8 @@ def add_task():
 @app.route("/task/<int:task_id>/edit", methods=["GET", "POST"])
 @login_required
 def edit_task(task_id):
-
-    task = get_user_task_or_404(task_id)
-
-
-
-
-    task = Task.query.filter_by(id=task_id, user_id=session["user_id"]).first_or_404()
-
-
-    task = get_user_task_or_404(task_id)
-
+    current_user = User.query.get_or_404(session["user_id"])
+    task = get_user_task_or_404(task_id, current_user)
 
     if request.method == "POST":
         task.title = request.form["title"]
@@ -217,17 +198,8 @@ def edit_task(task_id):
 @app.route("/task/<int:task_id>/delete", methods=["GET", "POST"])
 @login_required
 def delete_task(task_id):
-
-    task = get_user_task_or_404(task_id)
-
-
-
-
-    task = Task.query.filter_by(id=task_id, user_id=session["user_id"]).first_or_404()
-
-
-    task = get_user_task_or_404(task_id)
-
+    current_user = User.query.get_or_404(session["user_id"])
+    task = get_user_task_or_404(task_id, current_user)
 
     if request.method == "POST":
         db.session.delete(task)
