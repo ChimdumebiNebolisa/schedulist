@@ -1,7 +1,5 @@
 from datetime import date
 
-import pytest
-
 from models import db, Task, User
 from sqlalchemy import select
 
@@ -70,5 +68,9 @@ def test_task_crud_operations(logged_in_client, user):
     # Delete
     resp = logged_in_client.post(f"/task/{task.id}/delete")
     assert resp.status_code == 302
+
+    assert Task.query.get(task.id) is None
+
     assert db.session.get(Task, task.id) is None
+
 

@@ -4,8 +4,6 @@ import os
 from functools import wraps
 
 
-
-
 from flask import (
     Flask,
     render_template,
@@ -55,12 +53,9 @@ with app.app_context():
     db.create_all()
 
 
-
 @app.errorhandler(403)
 def forbidden(_):
     return render_template("403.html"), 403
-
-
 
 
 def login_required(f):
@@ -88,7 +83,6 @@ def get_user_task_or_404(task_id: int, current_user: User) -> Task:
         )
         abort(403)
     return task
-
 
 
 @app.route("/")
@@ -153,6 +147,7 @@ def authorize():
     session["user_id"] = user.id
     session["user"] = user_info
     return redirect(url_for("index"))
+
 
 @app.route("/logout")
 def logout():
@@ -223,7 +218,4 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
 
-
-
     app.run()
-

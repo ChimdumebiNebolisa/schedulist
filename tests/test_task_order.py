@@ -29,8 +29,12 @@ def test_tasks_ordered_and_deadline_displayed(client):
         user = User(username="user", google_id="gid", email="user@example.com")
         db.session.add(user)
         db.session.commit()
-        t_late = Task(title="late", quadrant=1, user_id=user.id, deadline=date(2024, 1, 1))
-        t_early = Task(title="early", quadrant=1, user_id=user.id, deadline=date(2023, 1, 1))
+        t_late = Task(
+            title="late", quadrant=1, user_id=user.id, deadline=date(2024, 1, 1)
+        )
+        t_early = Task(
+            title="early", quadrant=1, user_id=user.id, deadline=date(2023, 1, 1)
+        )
         db.session.add_all([t_late, t_early])
         db.session.commit()
         user_id = user.id
