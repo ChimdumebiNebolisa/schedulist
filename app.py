@@ -3,6 +3,12 @@ import os
 from functools import wraps
 
 
+
+
+from flask import Flask, render_template, request, redirect, url_for, session
+
+
+
 from flask import (
     Flask,
     render_template,
@@ -88,6 +94,11 @@ def index():
 @app.route("/tasks/<int:task_id>/toggle")
 @login_required
 def toggle_task(task_id: int):
+
+
+    task = Task.query.filter_by(id=task_id, user_id=session["user_id"]).first_or_404()
+
+
     task = get_user_task_or_404(task_id)
 
     task.completed = not task.completed
@@ -155,6 +166,11 @@ def add_task():
 @app.route("/task/<int:task_id>/edit", methods=["GET", "POST"])
 @login_required
 def edit_task(task_id):
+
+
+    task = Task.query.filter_by(id=task_id, user_id=session["user_id"]).first_or_404()
+
+
     task = get_user_task_or_404(task_id)
 
     if request.method == "POST":
@@ -173,6 +189,11 @@ def edit_task(task_id):
 @app.route("/task/<int:task_id>/delete", methods=["GET", "POST"])
 @login_required
 def delete_task(task_id):
+
+
+    task = Task.query.filter_by(id=task_id, user_id=session["user_id"]).first_or_404()
+
+
     task = get_user_task_or_404(task_id)
 
     if request.method == "POST":
@@ -185,5 +206,6 @@ def delete_task(task_id):
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
+
     app.run()
 
