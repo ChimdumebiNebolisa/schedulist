@@ -3,10 +3,15 @@ from datetime import date
 from models import db, Task, User
 from sqlalchemy import select
 
+def test_root_route(client):
+    response = client.get("/")
+    assert response.status_code == 200
+    assert b"Server is running" in response.data
+
 
 def test_login_required(client):
-    """The index view should redirect anonymous users to login."""
-    response = client.get("/")
+    """The dashboard view should redirect anonymous users to login."""
+    response = client.get("/dashboard")
     assert response.status_code == 302
     assert "/login" in response.headers["Location"]
 

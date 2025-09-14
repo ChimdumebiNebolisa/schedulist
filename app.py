@@ -85,8 +85,12 @@ def get_user_task_or_404(task_id: int, current_user: User) -> Task:
         abort(403)
     return task
 
-
 @app.route("/")
+def root():
+    return "Server is running"
+
+
+@app.route("/dashboard")
 @login_required
 def index():
     user_id = session["user_id"]
@@ -215,4 +219,4 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
 
-    app.run()
+    app.run(debug=True)
