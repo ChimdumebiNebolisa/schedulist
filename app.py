@@ -2,7 +2,10 @@ from datetime import datetime
 import logging
 import os
 from functools import wraps
+
+
 from typing import Any
+
 
 from flask import (
     Flask,
@@ -15,10 +18,12 @@ from flask import (
 )
 
 
+
 try:
     from authlib.integrations.base_client import RemoteApp
 except ImportError:  # pragma: no cover - fallback for older Authlib versions
     RemoteApp = Any  # type: ignore[assignment]
+
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 
