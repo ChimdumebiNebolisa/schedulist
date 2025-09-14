@@ -60,9 +60,6 @@ if not google.client_secret:
 
 db.init_app(app)
 
-with app.app_context():
-    db.create_all()
-
 
 @app.errorhandler(403)
 def forbidden(_):
