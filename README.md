@@ -9,7 +9,7 @@ Schedulist is a work-in-progress productivity tool designed to help organize and
 1. Clone this repository.
 2. Navigate into the project directory.
 3. Copy `.env.example` to `.env` and replace the placeholder values with your
-   Google Cloud credentials.
+   Google Cloud credentials and database connection string.
 4. Install dependencies:
    ```bash
    pip install -r requirements.txt
@@ -86,6 +86,7 @@ To try logging in with Google, copy `.env.example` to `.env` and fill in:
 - `SECRET_KEY` – session secret for Flask
 - `GOOGLE_CLIENT_ID` – OAuth client ID from Google Cloud Console
 - `GOOGLE_CLIENT_SECRET` – matching client secret
+- `DATABASE_URL` – PostgreSQL connection string for the app (optional)
 
 The application loads these values automatically using [python-dotenv](https://saurabh-kumar.com/python-dotenv). After
 the file is created, navigate to `/login` to initiate the OAuth flow.
