@@ -97,6 +97,21 @@ task and view it in the matrix on the home page.
 
 Usage will expand as features are implemented.
 
+### Debug mode
+
+For local development, you can enable Flask's debug mode by setting the
+`FLASK_DEBUG` environment variable:
+
+```bash
+export FLASK_DEBUG=1  # or "true"
+python app.py
+# or
+flask --app app run
+```
+
+When `FLASK_DEBUG` is unset or set to any other value, the application runs
+with debug mode disabled.
+
 ## Google OAuth Setup
 
 To try logging in with Google, copy `.env.example` to `.env` and fill in:
