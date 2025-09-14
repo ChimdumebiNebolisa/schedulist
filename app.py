@@ -41,10 +41,7 @@ google = oauth.register(
     name="google",
     client_id=os.getenv("GOOGLE_CLIENT_ID"),
     client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
-    access_token_url="https://oauth2.googleapis.com/token",
-    authorize_url="https://accounts.google.com/o/oauth2/auth",
-    api_base_url="https://www.googleapis.com/oauth2/v1/",
-    userinfo_endpoint="https://openidconnect.googleapis.com/v1/userinfo",
+    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
     client_kwargs={"scope": "openid email profile"},
 )
 if google is None:
@@ -98,6 +95,7 @@ def get_user_task_or_404(task_id: int, current_user: User) -> Task:
         abort(403)
     return task
 
+
 @app.route("/")
 def root():
     return "Server is running"
@@ -135,13 +133,13 @@ def toggle_task(task_id: int):
 @app.route("/login")
 def login():
     redirect_uri = url_for("authorize", _external=True)
-    return oauth.google.authorize_redirect(redirect_uri)
+    return google.authorize_redirect(redirect_uri)
 
 
 @app.route("/login/callback")
 def authorize():
-    token = oauth.google.authorize_access_token()
-    user_info = oauth.google.parse_id_token(token)
+    token = google.authorize_access_token()
+    user_info = google.parse_id_token(token)
 
     user = db.session.execute(
         select(User).filter_by(google_id=user_info["sub"])
