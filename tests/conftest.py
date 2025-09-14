@@ -43,4 +43,3 @@ def logged_in_client(client, user):
         sess["user_id"] = user.id
         sess["user"] = {"sub": user.google_id, "email": user.email}
     return client
-

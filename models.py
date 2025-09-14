@@ -5,6 +5,7 @@ db = SQLAlchemy()
 
 class User(db.Model):
     """Represents a registered user."""
+
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -17,6 +18,7 @@ class User(db.Model):
 
 class Task(db.Model):
     """Represents a task belonging to a user."""
+
     __tablename__ = "tasks"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -26,4 +28,3 @@ class Task(db.Model):
     quadrant = db.Column(db.Integer, nullable=False)
     completed = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-

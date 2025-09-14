@@ -27,6 +27,34 @@ Schedulist is a work-in-progress productivity tool designed to help organize and
 
    ```
 
+## Development
+
+This project uses [pre-commit](https://pre-commit.com/) to enforce code style
+with [Black](https://black.readthedocs.io/en/stable/) and
+[Ruff](https://docs.astral.sh/ruff/).
+
+### Setup
+
+1. Install the tooling:
+
+   ```bash
+   pip install pre-commit
+   ```
+
+2. Install the git hooks:
+
+   ```bash
+   pre-commit install
+   ```
+
+### Running hooks
+
+To run all checks against the entire codebase:
+
+```bash
+pre-commit run --all-files
+```
+
 ## Database Setup
 
 The application reads its database connection string from the

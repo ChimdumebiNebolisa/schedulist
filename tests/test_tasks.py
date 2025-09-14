@@ -1,7 +1,5 @@
 from datetime import date
 
-import pytest
-
 from models import db, Task, User
 
 
@@ -68,4 +66,3 @@ def test_task_crud_operations(logged_in_client, user):
     resp = logged_in_client.post(f"/task/{task.id}/delete")
     assert resp.status_code == 302
     assert Task.query.get(task.id) is None
-
