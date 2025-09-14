@@ -8,11 +8,7 @@ Schedulist is a work-in-progress productivity tool designed to help organize and
 
 1. Clone this repository.
 2. Navigate into the project directory.
-3. Copy `.env.example` to `.env` and replace the placeholder values with your
-
-   Google Cloud credentials.
-
-   Google Cloud credentials and database connection string.
+3. Copy `.env.example` to `.env` and replace the placeholder values with your Google Cloud credentials and database connection string.
 
 4. Install dependencies:
    ```bash
@@ -20,11 +16,26 @@ Schedulist is a work-in-progress productivity tool designed to help organize and
    ```
 5. Start the development server:
    ```bash
-
-   flask run
-
    flask --app app run
+   ```
+   This command explicitly references the app module and works without extra environment variables. If you prefer the shorter `flask run`, first set `FLASK_APP=app`.
 
+   macOS/Linux
+   ```bash
+   export FLASK_APP=app
+   flask run
+   ```
+
+   Windows (PowerShell)
+   ```powershell
+   $env:FLASK_APP="app"
+   flask run
+   ```
+
+   Windows (cmd.exe)
+   ```cmd
+   set FLASK_APP=app
+   flask run
    ```
 
 ## Database Setup
@@ -37,52 +48,23 @@ export DATABASE_URL="postgresql://user:password@localhost/schedulist"
 ```
 
 If `DATABASE_URL` is not set, the app falls back to a local SQLite file
-(`schedulist.db`). To initialize the database manually, run:
+(`schedulist.db`). Running the server as shown above initializes the database
+and generates the SQLite file. You can also run the module directly:
 
 ```bash
 python app.py
-# or
-flask --app app run
-```
-
-This will generate a `schedulist.db` file in the project directory with the
-required tables.
-
-If you prefer to rely on the Flask CLI's default discovery, set the
-`FLASK_APP` environment variable before running `flask run`:
-
-```bash
-
-export FLASK_APP=app   # macOS/Linux
-flask run
-```
-
-On Windows:
-
-```powershell
-$env:FLASK_APP="app"   # PowerShell
-flask run
-
-:: or using cmd.exe
-set FLASK_APP=app
-flask run
 ```
 
 ## Usage
 
-After installing the dependencies, the application can be started locally once the Flask app is ready:
+Start the application with:
 
 ```bash
-python app.py
-# or
 flask --app app run
 ```
 
-To use the default `flask run` command without `--app`, make sure
-`FLASK_APP` is set as shown above.
-
-
-With the server running, visit `http://127.0.0.1:5000/add` to create a new
+Running `python app.py` directly will also start the development server. With
+the server running, visit `http://127.0.0.1:5000/add` to create a new
 task and view it in the matrix on the home page.
 
 Usage will expand as features are implemented.
