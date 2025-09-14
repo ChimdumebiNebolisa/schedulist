@@ -3,7 +3,11 @@ import logging
 import os
 from functools import wraps
 
+from typing import Any, cast
+
+
 from typing import Any
+
 
 
 from flask import (
@@ -39,9 +43,13 @@ except KeyError as exc:
 
 oauth = OAuth(app)
 
+google = oauth.register(
+
+
 google: Any = oauth.register(
 
 google = oauth.register(
+
 
     name="google",
     client_id=os.getenv("GOOGLE_CLIENT_ID"),
@@ -49,6 +57,11 @@ google = oauth.register(
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
     client_kwargs={"scope": "openid email profile"},
 )
+
+if google is None:
+    raise RuntimeError("Failed to register Google OAuth client")
+
+google = cast(Any, google)
 
 if not google.client_id:
     raise RuntimeError(
