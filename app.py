@@ -51,6 +51,16 @@ if google is None:
     raise RuntimeError("Failed to register Google OAuth client")
 assert google is not None
 
+if not google.client_id:
+    raise RuntimeError(
+        "GOOGLE_CLIENT_ID is missing. Set the GOOGLE_CLIENT_ID environment variable or provide it in a .env file."
+    )
+
+if not google.client_secret:
+    raise RuntimeError(
+        "GOOGLE_CLIENT_SECRET is missing. Set the GOOGLE_CLIENT_SECRET environment variable or provide it in a .env file."
+    )
+
 db.init_app(app)
 
 with app.app_context():
