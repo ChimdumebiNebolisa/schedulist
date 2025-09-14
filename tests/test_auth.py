@@ -6,6 +6,7 @@ import pytest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from app import app, db, google, User
+from sqlalchemy import select
 
 
 def test_authorize_with_email(client, monkeypatch):
@@ -19,7 +20,9 @@ def test_authorize_with_email(client, monkeypatch):
     response = client.get("/login/callback")
     assert response.status_code == 302
     with app.app_context():
-        user = User.query.filter_by(google_id="abc123").first()
+        user = db.session.execute(
+            select(User).filter_by(google_id="abc123")
+        ).scalar_one_or_none()
         assert user is not None
         assert user.email == "user@example.com"
 
