@@ -1,14 +1,7 @@
 from datetime import datetime
+import logging
 import os
 from functools import wraps
-
-
-from dotenv import load_dotenv
-
-
-
-from flask import Flask, render_template, request, redirect, url_for, session
-
 
 
 from flask import (
@@ -23,22 +16,21 @@ from flask import (
 
 
 from authlib.integrations.flask_client import OAuth
-
+from dotenv import load_dotenv
 
 from models import db, User, Task
 
 load_dotenv()
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
     "DATABASE_URL", "sqlite:///schedulist.db"
 )
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-app.secret_key = os.environ["SECRET_KEY"]
-
-app.secret_key = os.environ.get("SECRET_KEY", "dev")
-
+app.secret_key = os.getenv("SECRET_KEY", "dev")
 
 oauth = OAuth(app)
 google = oauth.register(
@@ -53,10 +45,14 @@ google = oauth.register(
 )
 
 db.init_app(app)
+
 with app.app_context():
     db.create_all()
 
 
+@app.errorhandler(403)
+def forbidden(_):
+    return render_template("403.html"), 403
 
 
 def login_required(f):
@@ -69,26 +65,23 @@ def login_required(f):
     return decorated_function
 
 
-
-
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if "user_id" not in session:
-            return redirect(url_for("login"))
-        return f(*args, **kwargs)
-
-    return decorated_function
 
 
 
 def get_user_task_or_404(task_id: int) -> Task:
     """Retrieve a task and ensure it belongs to the logged-in user."""
+    user_id = session.get("user_id")
+    logger.info("User %s requesting task %s", user_id, task_id)
     task = Task.query.get_or_404(task_id)
-    if task.user_id != session["user_id"]:
-        abort(404)
+    if task.user_id != user_id:
+        logger.warning(
+            "User %s forbidden from task %s owned by %s",
+            user_id,
+            task_id,
+            task.user_id,
+        )
+        abort(403)
     return task
-
 
 
 
@@ -97,39 +90,23 @@ def get_user_task_or_404(task_id: int) -> Task:
 def index():
     user_id = session["user_id"]
     tasks_by_quadrant = {
-
-        q: Task.query.filter_by(user_id=user_id, quadrant=q).all() for q in range(1, 5)
-
         q: (
             Task.query.filter_by(user_id=user_id, quadrant=q)
             .order_by(Task.deadline)
             .all()
         )
         for q in range(1, 5)
-
     }
     return render_template(
         "index.html", tasks=tasks_by_quadrant, user=session.get("user")
     )
 
 
-
 @app.route("/tasks/<int:task_id>/toggle")
 @login_required
 def toggle_task(task_id: int):
-
-    task = Task.query.filter_by(id=task_id, user_id=session["user_id"]).first_or_404()
-
-
     task = get_user_task_or_404(task_id)
 
-
-@app.route("/tasks/<int:task_id>/toggle")
-@login_required
-def toggle_task(task_id: int):
-    task = Task.query.filter_by(id=task_id, user_id=session["user_id"]).first_or_404()
-
-    
     task.completed = not task.completed
     db.session.commit()
     return redirect(url_for("index"))
@@ -154,11 +131,7 @@ def authorize():
         user = User(
             username=email,
             google_id=user_info["sub"],
-
-            email=user_info.get("email"),
-
             email=email,
-
         )
         db.session.add(user)
         db.session.commit()
@@ -166,7 +139,6 @@ def authorize():
     session["user_id"] = user.id
     session["user"] = user_info
     return redirect(url_for("index"))
-
 
 @app.route("/logout")
 def logout():
@@ -200,14 +172,7 @@ def add_task():
 @app.route("/task/<int:task_id>/edit", methods=["GET", "POST"])
 @login_required
 def edit_task(task_id):
-
-    task = Task.query.filter_by(id=task_id, user_id=session["user_id"]).first_or_404()
-
-
-    task = Task.query.filter_by(id=task_id, user_id=session["user_id"]).first_or_404()
-
     task = get_user_task_or_404(task_id)
-
 
     if request.method == "POST":
         task.title = request.form["title"]
@@ -225,14 +190,7 @@ def edit_task(task_id):
 @app.route("/task/<int:task_id>/delete", methods=["GET", "POST"])
 @login_required
 def delete_task(task_id):
-
-    task = Task.query.filter_by(id=task_id, user_id=session["user_id"]).first_or_404()
-
-
-    task = Task.query.filter_by(id=task_id, user_id=session["user_id"]).first_or_404()
-
     task = get_user_task_or_404(task_id)
-
 
     if request.method == "POST":
         db.session.delete(task)
@@ -241,16 +199,8 @@ def delete_task(task_id):
     return render_template("delete_task.html", task=task, user=session.get("user"))
 
 
-
-
-
 if __name__ == "__main__":
-
-
     with app.app_context():
         db.create_all()
-
-
-if __name__ == "__main__":
     app.run()
 

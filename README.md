@@ -8,9 +8,15 @@ Schedulist is a work-in-progress productivity tool designed to help organize and
 
 1. Clone this repository.
 2. Navigate into the project directory.
-3. Install dependencies (once available). For example:
+3. Copy `.env.example` to `.env` and replace the placeholder values with your
+   Google Cloud credentials.
+4. Install dependencies:
    ```bash
    pip install -r requirements.txt
+   ```
+5. Start the development server:
+   ```bash
+   flask run
    ```
 
 ## Database Setup
