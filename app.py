@@ -13,7 +13,7 @@ from flask import (
     abort,
 )
 
-from authlib.integrations.flask_client import OAuth, RemoteApp
+from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 
 from models import db, User, Task
@@ -39,7 +39,7 @@ except KeyError as exc:
 
 # OAuth setup
 oauth = OAuth(app)
-google: RemoteApp = oauth.register(
+google = oauth.register(
     name="google",
     client_id=os.getenv("GOOGLE_CLIENT_ID"),
     client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
@@ -47,19 +47,32 @@ google: RemoteApp = oauth.register(
     client_kwargs={"scope": "openid email profile"},
 )
 
-# Runtime checks for env variables
-if not google.client_id:
-    raise RuntimeError(
-        "GOOGLE_CLIENT_ID is missing. Set the GOOGLE_CLIENT_ID environment variable or provide it in a .env file."
-    )
+# Validate registration and env vars
+if google is None:
+    raise RuntimeError("Failed to register Google OAuth client")
 
-if not google.client_secret:
-    raise RuntimeError(
-        "GOOGLE_CLIENT_SECRET is missing. Set the GOOGLE_CLIENT_SECRET environment variable or provide it in a .env file."
-    )
+client_id_env = os.getenv("GOOGLE_CLIENT_ID")
+client_secret_env = os.getenv("GOOGLE_CLIENT_SECRET")
+if not client_id_env:
+    raise RuntimeError("GOOGLE_CLIENT_ID is missing. Check your .env file.")
+if not client_secret_env:
+    raise RuntimeError("GOOGLE_CLIENT_SECRET is missing. Check your .env file.")
+
+logger.info("GOOGLE_CLIENT_ID loaded: %s", client_id_env)
 
 # Initialize DB
 db.init_app(app)
+
+# Check if database tables exist on startup
+with app.app_context():
+    try:
+        db.create_all()  # ensures tables exist
+        logger.info("Database check: tables are ready.")
+    except Exception as exc:
+        logger.exception("Database check failed: %s", exc)
+        raise RuntimeError(
+            "Database is not set up properly. Run migrations or fix DATABASE_URL."
+        )
 
 
 @app.errorhandler(403)
@@ -137,29 +150,34 @@ def login():
 @app.route("/login/callback")
 def authorize():
     try:
-        google.authorize_access_token()
-    except Exception as exc:  # pragma: no cover - oauth library error handling
+        token = google.authorize_access_token()
+    except Exception as exc:
         logger.exception("Failed to authorize access token: %s", exc)
         abort(400, description="Failed to authorize access token")
 
-    try:
-        resp = google.get("userinfo")
-        user_info = resp.json()
-    except Exception as exc:  # pragma: no cover - oauth library error handling
-        logger.exception("Failed to fetch user info: %s", exc)
-        abort(500, description="Failed to parse user information")
+    # Try to get user info from token
+    user_info = token.get("userinfo")
+    if not user_info:
+        try:
+            resp = google.get("userinfo", token=token)
+            user_info = resp.json() if resp.ok else None
+        except Exception as exc:
+            logger.exception("Failed to fetch user info: %s", exc)
+            abort(500, description="Failed to parse user information")
 
+    if not user_info or not user_info.get("email"):
+        abort(400, description="Email claim missing from user info")
+
+    # Find or create user
     user = db.session.execute(
         select(User).filter_by(google_id=user_info["sub"])
     ).scalar_one_or_none()
+
     if user is None:
-        email = user_info.get("email")
-        if email is None:
-            abort(400, description="Email claim missing from user info")
         user = User(
-            username=email,
+            username=user_info["email"],
             google_id=user_info["sub"],
-            email=email,
+            email=user_info["email"],
         )
         db.session.add(user)
         db.session.commit()
