@@ -47,16 +47,18 @@ google = oauth.register(
     client_kwargs={"scope": "openid email profile"},
 )
 
-# Runtime checks for env variables
-if not google.client_id:
-    raise RuntimeError(
-        "GOOGLE_CLIENT_ID is missing. Set the GOOGLE_CLIENT_ID environment variable or provide it in a .env file."
-    )
+# Validate registration and env vars
+if google is None:
+    raise RuntimeError("Failed to register Google OAuth client")
 
-if not google.client_secret:
-    raise RuntimeError(
-        "GOOGLE_CLIENT_SECRET is missing. Set the GOOGLE_CLIENT_SECRET environment variable or provide it in a .env file."
-    )
+client_id_env = os.getenv("GOOGLE_CLIENT_ID")
+client_secret_env = os.getenv("GOOGLE_CLIENT_SECRET")
+if not client_id_env:
+    raise RuntimeError("GOOGLE_CLIENT_ID is missing. Check your .env file.")
+if not client_secret_env:
+    raise RuntimeError("GOOGLE_CLIENT_SECRET is missing. Check your .env file.")
+
+logger.info("GOOGLE_CLIENT_ID loaded: %s", client_id_env)
 
 # Initialize DB
 db.init_app(app)
@@ -142,6 +144,14 @@ def authorize():
         logger.exception("Failed to authorize access token: %s", exc)
         abort(400, description="Failed to authorize access token")
 
+
+    # Try to get user info from token
+    user_info = token.get("userinfo")
+    if not user_info:
+        try:
+            resp = google.get("userinfo", token=token)
+            user_info = resp.json() if resp.ok else None
+
     # Try to get user info from token (preferred)
     user_info = token.get("userinfo")
     if not user_info:
@@ -151,6 +161,7 @@ def authorize():
             except TypeError:  # fallback for mocks without token param
                 resp = google.get("userinfo")
             user_info = resp.json() if getattr(resp, "ok", True) else None
+
         except Exception as exc:
             logger.exception("Failed to fetch user info: %s", exc)
             abort(500, description="Failed to parse user information")
@@ -158,7 +169,11 @@ def authorize():
     if not user_info or not user_info.get("email"):
         abort(400, description="Email claim missing from user info")
 
+
+    # Find or create user
+
     # Find or create user in DB
+
     user = db.session.execute(
         select(User).filter_by(google_id=user_info["sub"])
     ).scalar_one_or_none()
