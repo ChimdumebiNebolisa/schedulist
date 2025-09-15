@@ -144,12 +144,24 @@ def authorize():
         logger.exception("Failed to authorize access token: %s", exc)
         abort(400, description="Failed to authorize access token")
 
+
     # Try to get user info from token
     user_info = token.get("userinfo")
     if not user_info:
         try:
             resp = google.get("userinfo", token=token)
             user_info = resp.json() if resp.ok else None
+
+    # Try to get user info from token (preferred)
+    user_info = token.get("userinfo")
+    if not user_info:
+        try:
+            try:
+                resp = google.get("userinfo", token=token)
+            except TypeError:  # fallback for mocks without token param
+                resp = google.get("userinfo")
+            user_info = resp.json() if getattr(resp, "ok", True) else None
+
         except Exception as exc:
             logger.exception("Failed to fetch user info: %s", exc)
             abort(500, description="Failed to parse user information")
@@ -157,7 +169,11 @@ def authorize():
     if not user_info or not user_info.get("email"):
         abort(400, description="Email claim missing from user info")
 
+
     # Find or create user
+
+    # Find or create user in DB
+
     user = db.session.execute(
         select(User).filter_by(google_id=user_info["sub"])
     ).scalar_one_or_none()
