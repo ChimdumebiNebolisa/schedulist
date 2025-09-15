@@ -1,0 +1,8 @@
+.task-card {
+    transition: box-shadow 0.2s ease-in-out;
+    border-radius: 0.5rem;
+}
+
+.task-card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
