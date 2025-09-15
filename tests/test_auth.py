@@ -12,6 +12,7 @@ def test_authorize_with_email(client, monkeypatch):
     class DummyResp:
         def __init__(self, data):
             self._data = data
+            self.ok = True
 
         def json(self):
             return self._data
@@ -20,7 +21,7 @@ def test_authorize_with_email(client, monkeypatch):
     monkeypatch.setattr(
         google,
         "get",
-        lambda url: DummyResp({"sub": "abc123", "email": "user@example.com"}),
+        lambda url, token=None: DummyResp({"sub": "abc123", "email": "user@example.com"}),
     )
 
     response = client.get("/login/callback")
@@ -37,6 +38,7 @@ def test_authorize_without_email(client, monkeypatch):
     class DummyResp:
         def __init__(self, data):
             self._data = data
+            self.ok = True
 
         def json(self):
             return self._data
@@ -45,7 +47,7 @@ def test_authorize_without_email(client, monkeypatch):
     monkeypatch.setattr(
         google,
         "get",
-        lambda url: DummyResp({"sub": "abc123"}),
+        lambda url, token=None: DummyResp({"sub": "abc123"}),
     )
 
     response = client.get("/login/callback")
@@ -67,7 +69,7 @@ def test_authorize_access_token_error(client, monkeypatch):
 def test_userinfo_fetch_error(client, monkeypatch):
     monkeypatch.setattr(google, "authorize_access_token", lambda: {})
 
-    def raise_error(url):  # pragma: no cover - monkeypatched function
+    def raise_error(url, token=None):  # pragma: no cover - monkeypatched function
         raise RuntimeError("boom")
 
     monkeypatch.setattr(google, "get", raise_error)
