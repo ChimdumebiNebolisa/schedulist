@@ -63,6 +63,17 @@ logger.info("GOOGLE_CLIENT_ID loaded: %s", client_id_env)
 # Initialize DB
 db.init_app(app)
 
+# Check if database tables exist on startup
+with app.app_context():
+    try:
+        db.create_all()  # ensures tables exist
+        logger.info("Database check: tables are ready.")
+    except Exception as exc:
+        logger.exception("Database check failed: %s", exc)
+        raise RuntimeError(
+            "Database is not set up properly. Run migrations or fix DATABASE_URL."
+        )
+
 
 @app.errorhandler(403)
 def forbidden(_):
@@ -152,6 +163,11 @@ def authorize():
             resp = google.get("userinfo", token=token)
             user_info = resp.json() if resp.ok else None
 
+        except Exception as exc:
+            logger.exception("Failed to fetch user info: %s", exc)
+            abort(500, description="Failed to parse user information")
+
+
     # Try to get user info from token (preferred)
     user_info = token.get("userinfo")
     if not user_info:
@@ -174,6 +190,11 @@ def authorize():
 
     # Find or create user in DB
 
+
+    if not user_info or not user_info.get("email"):
+        abort(400, description="Email claim missing from user info")
+
+    # Find or create user
     user = db.session.execute(
         select(User).filter_by(google_id=user_info["sub"])
     ).scalar_one_or_none()
