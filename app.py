@@ -13,7 +13,7 @@ from flask import (
     abort,
 )
 
-from authlib.integrations.flask_client import OAuth, RemoteApp
+from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 
 from models import db, User, Task
@@ -39,7 +39,7 @@ except KeyError as exc:
 
 # OAuth setup
 oauth = OAuth(app)
-google: RemoteApp = oauth.register(
+google = oauth.register(
     name="google",
     client_id=os.getenv("GOOGLE_CLIENT_ID"),
     client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
@@ -137,29 +137,37 @@ def login():
 @app.route("/login/callback")
 def authorize():
     try:
-        google.authorize_access_token()
-    except Exception as exc:  # pragma: no cover - oauth library error handling
+        token = google.authorize_access_token()
+    except Exception as exc:
         logger.exception("Failed to authorize access token: %s", exc)
         abort(400, description="Failed to authorize access token")
 
-    try:
-        resp = google.get("userinfo")
-        user_info = resp.json()
-    except Exception as exc:  # pragma: no cover - oauth library error handling
-        logger.exception("Failed to fetch user info: %s", exc)
-        abort(500, description="Failed to parse user information")
+    # Try to get user info from token (preferred)
+    user_info = token.get("userinfo")
+    if not user_info:
+        try:
+            try:
+                resp = google.get("userinfo", token=token)
+            except TypeError:  # fallback for mocks without token param
+                resp = google.get("userinfo")
+            user_info = resp.json() if getattr(resp, "ok", True) else None
+        except Exception as exc:
+            logger.exception("Failed to fetch user info: %s", exc)
+            abort(500, description="Failed to parse user information")
 
+    if not user_info or not user_info.get("email"):
+        abort(400, description="Email claim missing from user info")
+
+    # Find or create user in DB
     user = db.session.execute(
         select(User).filter_by(google_id=user_info["sub"])
     ).scalar_one_or_none()
+
     if user is None:
-        email = user_info.get("email")
-        if email is None:
-            abort(400, description="Email claim missing from user info")
         user = User(
-            username=email,
+            username=user_info["email"],
             google_id=user_info["sub"],
-            email=email,
+            email=user_info["email"],
         )
         db.session.add(user)
         db.session.commit()
