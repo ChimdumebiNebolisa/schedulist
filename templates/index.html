@@ -6,6 +6,11 @@
 {% extends "base.html" %}
 
 
+
+{% extends "base.html" %}
+
+
+
 {% block title %}Dashboard · Schedulist{% endblock %}
 
 {% block content %}
@@ -15,11 +20,13 @@
 
 
 
+
 {% extends "base.html" %}
 
 {% block content %}
 {% if user %}
 <div class="row g-4">
+
 
 
     {% set quadrants = [
@@ -37,8 +44,13 @@
     <div class="col">
         <div class="card quadrant-card h-100 shadow-sm">
 
+
+    <div class="col">
+        <div class="card quadrant-card h-100 shadow-sm">
+
     <div class="col-12 col-md-6">
         <div class="card h-100 shadow-sm">
+
 
 
             <div class="card-header {{ header_class }}">
@@ -60,6 +72,7 @@
                                 <i class="bi bi-calendar-event me-1"></i>
                                 {{ task.deadline.strftime('%Y-%m-%d') }}
                             </h6>
+
 
                 {% if tasks[qid] %}
 
@@ -119,10 +132,12 @@
 
 
 
+
                             <div class="btn-group" role="group">
                                 <a href="{{ url_for('edit_task', task_id=task.id) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i> Edit</a>
                                 <a href="{{ url_for('delete_task', task_id=task.id) }}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Delete</a>
                                 <a href="{{ url_for('toggle_task', task_id=task.id) }}" class="btn btn-sm btn-outline-success">
+
 
 
 
@@ -145,7 +160,11 @@
 
                 </div>
 
+
+                </div>
+
               
+
 
 
                 {% else %}
