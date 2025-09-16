@@ -19,19 +19,4 @@
         </div>
     </div>
 </div>
-
-
-
-{% block content %}
-<h1 class="mb-4">Delete Task</h1>
-<div class="alert alert-warning" role="alert">
-    Are you sure you want to delete "{{ task.title }}"?
-</div>
-<form method="post">
-    <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>
-    <button type="submit" class="btn btn-danger ms-2">Delete</button>
-</form>
-
-
-
 {% endblock %}
