@@ -23,9 +23,10 @@
                 {% if quadrant_tasks %}
                 <div class="d-flex flex-column gap-3">
                     {% for task in quadrant_tasks %}
+                    {% set title_classes = 'text-decoration-line-through' if task.completed else '' %}
                     <div class="card task-card">
                         <div class="card-body">
-                            <h5 class="card-title {{ 'text-decoration-line-through' if task.completed else '' }}">
+                            <h5 class="card-title {{ title_classes }}">
                                 {{ task.title }}
                             </h5>
                             {% if task.deadline %}
@@ -44,12 +45,10 @@
                                 <a href="{{ url_for('delete_task', task_id=task.id) }}" class="btn btn-outline-danger">
                                     <i class="bi bi-trash"></i> Delete
                                 </a>
+                                {% set action_icon = 'bi-arrow-counterclockwise' if task.completed else 'bi-check' %}
+                                {% set action_label = 'Undo' if task.completed else 'Done' %}
                                 <a href="{{ url_for('toggle_task', task_id=task.id) }}" class="btn btn-outline-success">
-                                    {% if task.completed %}
-                                    <i class="bi bi-arrow-counterclockwise"></i> Undo
-                                    {% else %}
-                                    <i class="bi bi-check"></i> Done
-                                    {% endif %}
+                                    <i class="bi {{ action_icon }}"></i> {{ action_label }}
                                 </a>
                             </div>
                         </div>

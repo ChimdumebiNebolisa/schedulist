@@ -16,6 +16,14 @@ def test_login_required(client):
     assert "/login" in response.headers["Location"]
 
 
+def test_dashboard_template_renders(logged_in_client):
+    """The dashboard page should render successfully for logged-in users."""
+    response = logged_in_client.get("/dashboard")
+    assert response.status_code == 200
+    assert b"Dashboard" in response.data
+    assert b"No tasks yet." in response.data
+
+
 def test_tasks_limited_to_session_user(client, app):
     """Accessing another user's task should return 403."""
     user1 = User(username="u1@example.com", google_id="gid1", email="u1@example.com")
