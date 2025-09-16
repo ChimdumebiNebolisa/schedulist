@@ -1,42 +1,189 @@
-
 body {
-    background-color: #f8f9fb;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #f7f9fc 0%, #ffffff 45%, #f0f4ff 100%);
+    color: var(--bs-body-color);
+}
+
+html[data-bs-theme="dark"] body {
+    background: linear-gradient(180deg, #0f172a 0%, #111827 40%, #0b1120 100%);
+}
+
+main {
+    padding-bottom: 5rem;
+}
+
+.navbar {
+    box-shadow: 0 1rem 3rem rgba(15, 23, 42, 0.08);
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(6px);
+}
+
+html[data-bs-theme="dark"] .navbar {
+    background-color: rgba(15, 23, 42, 0.85) !important;
+    box-shadow: 0 1rem 3rem rgba(2, 6, 23, 0.5);
 }
 
 .navbar-brand {
     letter-spacing: 0.02em;
 }
 
-.quadrant-card {
-    border: none;
-    border-radius: 0.75rem;
-    overflow: hidden;
+.navbar .nav-link {
+    position: relative;
+    font-weight: 500;
+    color: var(--bs-body-color);
+    transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.quadrant-card .card-header {
+.navbar .nav-link i {
+    font-size: 1.05rem;
+    line-height: 1;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+    color: var(--bs-primary);
+}
+
+.navbar .nav-link.active {
+    color: var(--bs-primary);
     font-weight: 600;
 }
 
+.navbar .nav-link.active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -0.35rem;
+    width: 100%;
+    height: 0.2rem;
+    background-color: var(--bs-primary);
+    border-radius: 999px;
+}
+
+.quadrant-card {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 1.5rem 3rem rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+    background-color: var(--bs-card-bg);
+}
+
+html[data-bs-theme="dark"] .quadrant-card {
+    box-shadow: 0 1.5rem 3rem rgba(2, 6, 23, 0.6);
+}
+
+.quadrant-card .card-header {
+    border: none;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+}
+
+.quadrant-card .quadrant-icon {
+    font-size: 1.5rem;
+}
+
+.progress {
+    border-radius: 999px;
+    background-color: rgba(15, 23, 42, 0.08);
+}
+
+html[data-bs-theme="dark"] .progress {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+.progress-bar {
+    border-radius: 999px;
+}
+
 .task-card {
-    border-radius: 0.75rem;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+    border: 1px solid rgba(15, 23, 42, 0.05);
+    border-radius: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background-color: var(--bs-card-bg);
+}
+
+.task-card .card-body {
+    padding: 1.25rem;
 }
 
 .task-card:hover {
-    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-
-
-
-.task-card {
-    transition: box-shadow 0.2s ease-in-out;
-    border-radius: 0.5rem;
+    transform: translateY(-4px);
+    box-shadow: 0 1.5rem 3rem rgba(15, 23, 42, 0.12);
 }
 
-.task-card:hover {
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+html[data-bs-theme="dark"] .task-card {
+    border-color: rgba(255, 255, 255, 0.12);
+    background-color: rgba(15, 23, 42, 0.7);
+    box-shadow: 0 1.5rem 3rem rgba(2, 6, 23, 0.4);
+}
 
+html[data-bs-theme="dark"] .task-card:hover {
+    box-shadow: 0 1.5rem 3rem rgba(2, 6, 23, 0.65);
+}
 
+.empty-state-card {
+    border-radius: 1rem;
+    background-color: rgba(241, 245, 255, 0.6);
+    border: 1px dashed rgba(99, 102, 241, 0.4);
+    padding: 1.5rem;
+}
 
+.empty-state-card i {
+    color: rgba(71, 85, 105, 0.7);
+}
+
+html[data-bs-theme="dark"] .empty-state-card {
+    background-color: rgba(59, 130, 246, 0.15);
+    border-color: rgba(96, 165, 250, 0.35);
+}
+
+html[data-bs-theme="dark"] .empty-state-card i {
+    color: rgba(226, 232, 240, 0.75);
+}
+
+.fab {
+    position: fixed;
+    bottom: 1.75rem;
+    right: 1.75rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    z-index: 1030;
+}
+
+.fab:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 1.5rem 3rem rgba(13, 110, 253, 0.35);
+}
+
+.theme-toggle {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+}
+
+.theme-toggle .theme-toggle-icon {
+    font-size: 1.1rem;
+}
+
+@media (max-width: 575.98px) {
+    .fab {
+        bottom: 1.25rem;
+        right: 1.25rem;
+    }
+
+    .navbar .nav-link.active::after {
+        bottom: -0.2rem;
+    }
 }
