@@ -1,3 +1,32 @@
+
+body {
+    background-color: #f8f9fb;
+}
+
+.navbar-brand {
+    letter-spacing: 0.02em;
+}
+
+.quadrant-card {
+    border: none;
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.quadrant-card .card-header {
+    font-weight: 600;
+}
+
+.task-card {
+    border-radius: 0.75rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.task-card:hover {
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+
 .task-card {
     transition: box-shadow 0.2s ease-in-out;
     border-radius: 0.5rem;
@@ -5,4 +34,5 @@
 
 .task-card:hover {
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+
 }
