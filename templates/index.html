@@ -4,31 +4,67 @@
 
 {% block content %}
 {% if user %}
-<h1 class="mb-4">Dashboard</h1>
-<div class="row row-cols-1 row-cols-md-2 g-4">
-    {% set quadrants = [
-        (1, 'Urgent & Important', 'bg-danger text-white'),
-        (2, 'Not Urgent & Important', 'bg-primary text-white'),
-        (3, 'Urgent & Not Important', 'bg-warning text-dark'),
-        (4, 'Not Urgent & Not Important', 'bg-success text-white')
-    ] %}
-    {% for qid, title, header_class in quadrants %}
+<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-4">
+    <div>
+        <h1 class="mb-0 dashboard-title">Dashboard</h1>
+        <p class="text-muted mb-0">Organize your priorities across the Eisenhower Matrix.</p>
+    </div>
+</div>
+{% set quadrants = [
+    (1, 'Urgent & Important', 'bg-danger text-white', 'bg-danger', '⏰'),
+    (2, 'Not Urgent & Important', 'bg-primary text-white', 'bg-primary', '⭐'),
+    (3, 'Urgent & Not Important', 'bg-warning text-dark', 'bg-warning', '⚡'),
+    (4, 'Not Urgent & Not Important', 'bg-success text-white', 'bg-success', '🌱')
+] %}
+<div class="row row-cols-1 row-cols-lg-2 g-4">
+    {% for qid, title, header_class, progress_class, quadrant_icon in quadrants %}
+    {% set quadrant_tasks = tasks.get(qid, []) %}
+    {% set total_tasks = quadrant_tasks | length %}
+    {% set completed_tasks = quadrant_tasks | selectattr('completed') | list | length %}
+    {% set completion_percentage = (completed_tasks * 100 / total_tasks) | round(0, 'floor') if total_tasks else 0 %}
     <div class="col">
-        <div class="card quadrant-card h-100 shadow-sm">
-            <div class="card-header {{ header_class }}">
-                <h5 class="mb-0">{{ title }}</h5>
+        <div class="card quadrant-card h-100">
+            <div class="card-header {{ header_class }} d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="quadrant-icon" aria-hidden="true">{{ quadrant_icon }}</span>
+                    <h5 class="mb-0">{{ title }} ({{ total_tasks }})</h5>
+                </div>
             </div>
             <div class="card-body">
-                {% set quadrant_tasks = tasks.get(qid, []) %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between text-muted small mb-1 progress-meta">
+                        <span>{{ completed_tasks }} of {{ total_tasks }} completed</span>
+                        <span>{{ completion_percentage }}%</span>
+                    </div>
+                    <div class="progress" style="height: 0.5rem;">
+                        <div
+                            class="progress-bar {{ progress_class }}"
+                            role="progressbar"
+                            style="width: {{ completion_percentage }}%"
+                            aria-valuenow="{{ completion_percentage }}"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                        ></div>
+                    </div>
+                </div>
                 {% if quadrant_tasks %}
                 <div class="d-flex flex-column gap-3">
                     {% for task in quadrant_tasks %}
-                    {% set title_classes = 'text-decoration-line-through' if task.completed else '' %}
-                    <div class="card task-card">
+                    {% set title_classes = 'text-decoration-line-through text-muted' if task.completed else '' %}
+                    {% set is_today = task.deadline == today if task.deadline else False %}
+                    {% set is_overdue = task.deadline < today if task.deadline else False %}
+                    <div class="card task-card border-0">
                         <div class="card-body">
-                            <h5 class="card-title {{ title_classes }}">
-                                {{ task.title }}
-                            </h5>
+                            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                                <h5 class="card-title mb-0 {{ title_classes }}">{{ task.title }}</h5>
+                                {% if task.deadline %}
+                                    {% if is_overdue %}
+                                    <span class="badge bg-danger fw-semibold">Overdue</span>
+                                    {% elif is_today %}
+                                    <span class="badge bg-warning text-dark fw-semibold">Due Today</span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
                             {% if task.deadline %}
                             <h6 class="card-subtitle mb-2 text-muted">
                                 <i class="bi bi-calendar-event me-1"></i>
@@ -56,7 +92,17 @@
                     {% endfor %}
                 </div>
                 {% else %}
-                <div class="alert alert-secondary text-center mb-0" role="alert">No tasks yet.</div>
+                <div class="card empty-state-card text-center border-0">
+                    <div class="card-body">
+                        <i class="bi bi-clipboard-check display-5 text-muted"></i>
+                        <h6 class="mt-3">No tasks here yet. Add one to get started.</h6>
+                        <span class="visually-hidden">No tasks yet.</span>
+                        <a class="btn btn-outline-primary btn-sm mt-2" href="{{ url_for('add_task') }}">
+                            <i class="bi bi-plus-circle me-1"></i>
+                            Add Task
+                        </a>
+                    </div>
+                </div>
                 {% endif %}
             </div>
         </div>
