@@ -1,6 +1,7 @@
 from datetime import datetime, date
 import logging
 import os
+from urllib.parse import urlparse
 from functools import wraps
 
 from flask import (
@@ -31,6 +32,12 @@ app = Flask(__name__)
 database_url = os.getenv("DATABASE_URL")
 if not database_url:
     raise RuntimeError("DATABASE_URL environment variable not set")
+parsed_url = urlparse(database_url)
+logger.info(
+    "Database connection target host: %s path: %s",
+    parsed_url.hostname,
+    parsed_url.path,
+)
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 secret_key = os.getenv("SECRET_KEY")
