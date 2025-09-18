@@ -12,6 +12,12 @@ body {
     gap: 0.5rem;
 }
 
+.dashboard-greeting {
+    font-weight: 600;
+    text-align: left;
+    color: var(--bs-body-color);
+}
+
 .dashboard-title {
     color: var(--bs-emphasis-color);
 }
@@ -23,6 +29,11 @@ body {
 [data-bs-theme="dark"] body {
     background: #121212;
     background-color: #121212;
+    color: #e0e0e0;
+}
+
+html[data-bs-theme="dark"] body {
+    background: linear-gradient(180deg, #0f172a 0%, #111827 40%, #0b1120 100%);
     color: #e0e0e0;
 }
 
@@ -156,14 +167,6 @@ main {
     flex-grow: 1;
 }
 
-.dashboard-grid > .col {
-    display: flex;
-}
-
-.dashboard-grid > .col > .quadrant-card {
-    width: 100%;
-}
-
 .quadrant-card .quadrant-icon {
     font-size: 1.5rem;
 }
@@ -233,7 +236,6 @@ main {
 [data-bs-theme="dark"] .task-card:hover {
     box-shadow: 0 1.5rem 3rem rgba(2, 6, 23, 0.65);
 }
-
 
 .empty-state-card {
     border-radius: 1rem;
