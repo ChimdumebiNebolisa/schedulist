@@ -33,10 +33,10 @@ if not database_url:
     raise RuntimeError("DATABASE_URL environment variable not set")
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-try:
-    app.secret_key = os.environ["SECRET_KEY"]
-except KeyError as exc:
-    raise RuntimeError("SECRET_KEY environment variable not set") from exc
+secret_key = os.getenv("SECRET_KEY")
+if secret_key is None:
+    raise RuntimeError("SECRET_KEY environment variable not set")
+app.secret_key = secret_key
 
 # OAuth setup
 oauth = OAuth(app)
