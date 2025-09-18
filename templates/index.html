@@ -4,9 +4,36 @@
 
 {% block content %}
 {% if user %}
+
 <div class="dashboard-header text-center mb-4">
     <h1 class="dashboard-title mb-2">Dashboard</h1>
     <p class="text-muted mb-0">Organize your priorities across the Eisenhower Matrix.</p>
+
+
+<div class="dashboard-header text-center mb-4">
+    <h1 class="dashboard-title mb-2">Dashboard</h1>
+    <p class="text-muted mb-0">Organize your priorities across the Eisenhower Matrix.</p>
+
+
+<div class="dashboard-header mb-4">
+    {% if user.get('name') %}
+    <p class="text-muted mb-2 dashboard-greeting">Welcome, {{ user.name }}</p>
+    {% endif %}
+    <h1 class="dashboard-title text-center mb-2">Dashboard</h1>
+    <p class="text-muted mb-0 text-center">Organize your priorities across the Eisenhower Matrix.</p>
+
+<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-4">
+    <div>
+
+        <h1 class="mb-0 dashboard-title">Dashboard</h1>
+
+        <h1 class="mb-0">Dashboard</h1>
+
+        <p class="text-muted mb-0">Organize your priorities across the Eisenhower Matrix.</p>
+    </div>
+
+
+
 </div>
 {% set quadrants = [
     (1, 'Urgent & Important', 'bg-danger text-white', 'bg-danger', '⏰'),
@@ -14,7 +41,19 @@
     (3, 'Urgent & Not Important', 'bg-warning text-dark', 'bg-warning', '⚡'),
     (4, 'Not Urgent & Not Important', 'bg-success text-white', 'bg-success', '🌱')
 ] %}
+
 <div class="row row-cols-1 row-cols-md-2 g-4 dashboard-grid">
+
+
+<div class="row row-cols-1 row-cols-md-2 g-4 dashboard-grid">
+
+
+<div class="row row-cols-1 row-cols-md-2 g-4">
+
+<div class="row row-cols-1 row-cols-lg-2 g-4">
+
+
+
     {% for qid, title, header_class, progress_class, quadrant_icon in quadrants %}
     {% set quadrant_tasks = tasks.get(qid, []) %}
     {% set total_tasks = quadrant_tasks | length %}
@@ -28,9 +67,31 @@
                     <h5 class="mb-0">{{ title }} ({{ total_tasks }})</h5>
                 </div>
             </div>
+
             <div class="card-body d-flex flex-column gap-3">
                 <div>
                     <div class="d-flex justify-content-between text-muted small mb-1 progress-meta">
+
+
+            <div class="card-body d-flex flex-column gap-3">
+                <div>
+                    <div class="d-flex justify-content-between text-muted small mb-1 progress-meta">
+
+
+            <div class="card-body d-flex flex-column gap-3">
+                <div>
+                    <div class="d-flex justify-content-between text-muted small mb-1 progress-meta">
+
+            <div class="card-body">
+                <div class="mb-3">
+
+                    <div class="d-flex justify-content-between text-muted small mb-1 progress-meta">
+
+                    <div class="d-flex justify-content-between text-muted small mb-1">
+
+
+
+
                         <span>{{ completed_tasks }} of {{ total_tasks }} completed</span>
                         <span>{{ completion_percentage }}%</span>
                     </div>
@@ -90,10 +151,27 @@
                     {% endfor %}
                 </div>
                 {% else %}
+
                 <div class="empty-state-card text-center flex-grow-1">
                     <i class="bi bi-clipboard-check display-5 text-muted"></i>
                     <h6 class="mt-3 mb-0">No tasks here yet. Add one to get started.</h6>
                     <span class="visually-hidden">No tasks yet.</span>
+
+
+
+                <div class="card empty-state-card text-center border-0">
+                    <div class="card-body">
+                        <i class="bi bi-clipboard-check display-5 text-muted"></i>
+                        <h6 class="mt-3">No tasks here yet. Add one to get started.</h6>
+                        <span class="visually-hidden">No tasks yet.</span>
+                        <a class="btn btn-outline-primary btn-sm mt-2" href="{{ url_for('add_task') }}">
+                            <i class="bi bi-plus-circle me-1"></i>
+                            Add Task
+                        </a>
+                    </div>
+
+
+
                 </div>
                 {% endif %}
             </div>
@@ -101,6 +179,9 @@
     </div>
     {% endfor %}
 </div>
+<a class="btn btn-primary fab shadow" href="{{ url_for('add_task') }}" aria-label="Add task">
+    <i class="bi bi-plus-lg"></i>
+</a>
 {% else %}
 <div class="text-center">
     <a href="{{ url_for('login') }}" class="btn btn-primary">Login with Google</a>
