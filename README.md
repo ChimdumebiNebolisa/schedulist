@@ -11,7 +11,7 @@ Schedulist is a task management web app built with Flask, SQLAlchemy, and Google
 
 ## Screenshots
 
-![Schedulist dashboard showing urgent and not-urgent quadrants](/assets/screenshots/dashboard.png)
+![Schedulist dashboard showing urgent and not-urgent quadrants](/assets/dashboard.png)
 <br/><sub>Dashboard view highlighting urgent vs. not-urgent task quadrants.</sub>
 
 ## Local Development
