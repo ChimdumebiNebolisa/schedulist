@@ -16,6 +16,7 @@ from flask import (
 
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
+from flask_migrate import Migrate
 
 from models import db, User, Task
 from sqlalchemy import select
@@ -70,17 +71,7 @@ logger.info("GOOGLE_CLIENT_ID loaded: %s", client_id_env)
 
 # Initialize DB
 db.init_app(app)
-
-# Check if database tables exist on startup
-with app.app_context():
-    try:
-        db.create_all()  # ensures tables exist
-        logger.info("Database check: tables are ready.")
-    except Exception as exc:
-        logger.exception("Database check failed: %s", exc)
-        raise RuntimeError(
-            "Database is not set up properly. Run migrations or fix DATABASE_URL."
-        )
+migrate = Migrate(app, db)
 
 
 @app.errorhandler(403)
