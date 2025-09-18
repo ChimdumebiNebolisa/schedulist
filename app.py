@@ -28,9 +28,10 @@ logger = logging.getLogger(__name__)
 
 # Flask app setup
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
-    "DATABASE_URL", "sqlite:///schedulist.db"
-)
+database_url = os.getenv("DATABASE_URL")
+if not database_url:
+    raise RuntimeError("DATABASE_URL environment variable not set")
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 try:
     app.secret_key = os.environ["SECRET_KEY"]
