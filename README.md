@@ -14,7 +14,13 @@ Schedulist is a work-in-progress productivity tool designed to help organize and
    ```bash
    pip install -r requirements.txt
    ```
-5. Start the development server:
+5. Apply database migrations to create the schema:
+   ```bash
+   flask --app app db upgrade
+   ```
+   The command requires `DATABASE_URL`, `SECRET_KEY`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT_SECRET` to be set in your environment (for example via `.env`).
+
+6. Start the development server:
    ```bash
    flask --app app run
    ```
@@ -75,9 +81,14 @@ The application reads its database connection string from the
 export DATABASE_URL="postgresql://user:password@localhost/schedulist"
 ```
 
-If `DATABASE_URL` is not set, the app falls back to a local SQLite file
-(`schedulist.db`). Running the server as shown above initializes the database
-and generates the SQLite file. You can also run the module directly:
+After setting the environment variables, run database migrations before
+starting the server:
+
+```bash
+flask --app app db upgrade
+```
+
+You can also run the module directly:
 
 ```bash
 python app.py
@@ -119,7 +130,7 @@ To try logging in with Google, copy `.env.example` to `.env` and fill in:
 - `SECRET_KEY` – session secret for Flask
 - `GOOGLE_CLIENT_ID` – OAuth client ID from Google Cloud Console
 - `GOOGLE_CLIENT_SECRET` – matching client secret
-- `DATABASE_URL` – PostgreSQL connection string for the app (optional)
+- `DATABASE_URL` – database connection string for the app (required)
 
 The application loads these values automatically using [python-dotenv](https://saurabh-kumar.com/python-dotenv). After
 the file is created, navigate to `/login` to initiate the OAuth flow.
@@ -141,7 +152,14 @@ To deploy your own instance on [Render](https://render.com):
    - `SECRET_KEY` – session secret for Flask
    - `GOOGLE_CLIENT_ID` – OAuth client ID from Google Cloud Console
    - `GOOGLE_CLIENT_SECRET` – matching client secret
-4. Trigger a deploy. Render will build the service and expose it at a `.onrender.com` URL.
+4. In the service's **Build Command**, run the database migrations so schema
+   changes are applied automatically:
+   ```bash
+   flask --app app db upgrade
+   ```
+   If you need a custom build script, ensure it ends by invoking the command
+   above before the server starts.
+5. Trigger a deploy. Render will build the service and expose it at a `.onrender.com` URL.
 
 ## Planned Features
 
