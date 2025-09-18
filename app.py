@@ -111,7 +111,7 @@ def get_user_task_or_404(task_id: int, current_user: User) -> Task:
 
 @app.route("/")
 def root():
-    return "Schedulist is deployed 🎉"
+    return render_template("dashboard.html")
 
 
 @app.route("/healthz")
