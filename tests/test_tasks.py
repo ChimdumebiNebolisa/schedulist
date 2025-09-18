@@ -6,7 +6,7 @@ from sqlalchemy import select
 def test_root_route(client):
     response = client.get("/")
     assert response.status_code == 200
-    assert b"Server is running" in response.data
+    assert b"Welcome to Schedulist" in response.data
 
 
 def test_login_required(client):

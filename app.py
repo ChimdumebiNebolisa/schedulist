@@ -157,7 +157,7 @@ def login():
     return google.authorize_redirect(redirect_uri)
 
 
-@app.route("/login/callback")
+@app.route("/authorize")
 def authorize():
     try:
         token = google.authorize_access_token()
