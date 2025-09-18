@@ -24,7 +24,7 @@ def test_authorize_with_email(client, monkeypatch):
         lambda url, token=None: DummyResp({"sub": "abc123", "email": "user@example.com"}),
     )
 
-    response = client.get("/login/callback")
+    response = client.get("/authorize")
     assert response.status_code == 302
     with app.app_context():
         user = db.session.execute(
@@ -50,7 +50,7 @@ def test_authorize_without_email(client, monkeypatch):
         lambda url, token=None: DummyResp({"sub": "abc123"}),
     )
 
-    response = client.get("/login/callback")
+    response = client.get("/authorize")
     assert response.status_code == 400
     assert b"Email claim missing" in response.data
 
@@ -61,7 +61,7 @@ def test_authorize_access_token_error(client, monkeypatch):
 
     monkeypatch.setattr(google, "authorize_access_token", raise_error)
 
-    response = client.get("/login/callback")
+    response = client.get("/authorize")
     assert response.status_code == 400
     assert b"Failed to authorize access token" in response.data
 
@@ -74,6 +74,6 @@ def test_userinfo_fetch_error(client, monkeypatch):
 
     monkeypatch.setattr(google, "get", raise_error)
 
-    response = client.get("/login/callback")
+    response = client.get("/authorize")
     assert response.status_code == 500
     assert b"Failed to parse user information" in response.data
