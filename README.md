@@ -1,170 +1,41 @@
 # Schedulist
 
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+Schedulist is a task management web app built with Flask, SQLAlchemy, and Google OAuth, deployed on Render with PostgreSQL.
 
-Schedulist is a work-in-progress productivity tool designed to help organize and prioritize tasks.
+## Features
 
-## Installation
+- Google login with OAuth-powered authentication
+- Eisenhower Matrix dashboard with urgent and important quadrants
+- Task creation, editing, and completion flows
+- Responsive Bootstrap-powered user interface
 
-1. Clone this repository.
-2. Navigate into the project directory.
-3. Copy `.env.example` to `.env` and replace the placeholder values with your Google Cloud credentials and database connection string.
+## Screenshots
 
-4. Install dependencies:
+![Schedulist dashboard showing urgent and not-urgent quadrants](/assets/screenshots/dashboard.png)
+<br/><sub>Dashboard view highlighting urgent vs. not-urgent task quadrants.</sub>
+
+## Local Development
+
+1. Clone the repository and navigate into the project directory.
+2. Create and activate a Python 3.11+ virtual environment.
+3. Install dependencies with `pip install -r requirements.txt`.
+4. Export required environment variables:
    ```bash
-   pip install -r requirements.txt
+   export DATABASE_URL=...
+   export GOOGLE_CLIENT_ID=...
+   export GOOGLE_CLIENT_SECRET=...
    ```
-5. Apply database migrations to create the schema:
-   ```bash
-   flask --app app db upgrade
-   ```
-   The command requires `DATABASE_URL`, `SECRET_KEY`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT_SECRET` to be set in your environment (for example via `.env`).
-
-6. Start the development server:
-   ```bash
-   flask --app app run
-   ```
-   This command explicitly references the app module and works without extra environment variables. If you prefer the shorter `flask run`, first set `FLASK_APP=app`.
-
-   macOS/Linux
-   ```bash
-   export FLASK_APP=app
-   flask run
-   ```
-
-   Windows (PowerShell)
-   ```powershell
-   $env:FLASK_APP="app"
-   flask run
-   ```
-
-   Windows (cmd.exe)
-   ```cmd
-   set FLASK_APP=app
-   flask run
-   ```
-
-## Development
-
-This project uses [pre-commit](https://pre-commit.com/) to enforce code style
-with [Black](https://black.readthedocs.io/en/stable/) and
-[Ruff](https://docs.astral.sh/ruff/).
-
-### Setup
-
-1. Install the tooling:
-
-   ```bash
-   pip install pre-commit
-   ```
-
-2. Install the git hooks:
-
-   ```bash
-   pre-commit install
-   ```
-
-### Running hooks
-
-To run all checks against the entire codebase:
-
-```bash
-pre-commit run --all-files
-```
-
-## Database Setup
-
-The application reads its database connection string from the
-`DATABASE_URL` environment variable. Provide a PostgreSQL URL such as:
-
-```bash
-export DATABASE_URL="postgresql://user:password@localhost/schedulist"
-```
-
-After setting the environment variables, run database migrations before
-starting the server:
-
-```bash
-flask --app app db upgrade
-```
-
-You can also run the module directly:
-
-```bash
-python app.py
-```
-
-## Usage
-
-Start the application with:
-
-```bash
-flask --app app run
-```
-
-Running `python app.py` directly will also start the development server. With
-the server running, visit `http://127.0.0.1:5000/add` to create a new
-task and view it in the matrix on the home page.
-
-Usage will expand as features are implemented.
-
-### Debug mode
-
-For local development, you can enable Flask's debug mode by setting the
-`FLASK_DEBUG` environment variable:
-
-```bash
-export FLASK_DEBUG=1  # or "true"
-python app.py
-# or
-flask --app app run
-```
-
-When `FLASK_DEBUG` is unset or set to any other value, the application runs
-with debug mode disabled.
-
-## Google OAuth Setup
-
-To try logging in with Google, copy `.env.example` to `.env` and fill in:
-
-- `SECRET_KEY` – session secret for Flask
-- `GOOGLE_CLIENT_ID` – OAuth client ID from Google Cloud Console
-- `GOOGLE_CLIENT_SECRET` – matching client secret
-- `DATABASE_URL` – database connection string for the app (required)
-
-The application loads these values automatically using [python-dotenv](https://saurabh-kumar.com/python-dotenv). After
-the file is created, navigate to `/login` to initiate the OAuth flow.
+5. Apply database migrations with `flask db upgrade`.
+6. Start the development server with `flask run`.
 
 ## Deployment
 
-Schedulist is deployed on Render at:
+Pushing to the main branch on GitHub triggers an automatic deploy on Render, where the gunicorn start command is already configured.
 
-https://schedulist.onrender.com
+## Contributing
 
-To deploy your own instance on [Render](https://render.com):
+Issues and pull requests are welcome. Fork the repository, create feature branches for your updates, and open a pull request describing your changes.
 
-1. Create a new **Web Service** and point it at this repository.
-2. Choose a Python environment and set the start command:
-   ```bash
-   gunicorn app:app --bind 0.0.0.0:$PORT
-   ```
-3. Configure the required environment variables:
-   - `SECRET_KEY` – session secret for Flask
-   - `GOOGLE_CLIENT_ID` – OAuth client ID from Google Cloud Console
-   - `GOOGLE_CLIENT_SECRET` – matching client secret
-4. In the service's **Build Command**, run the database migrations so schema
-   changes are applied automatically:
-   ```bash
-   flask --app app db upgrade
-   ```
-   If you need a custom build script, ensure it ends by invoking the command
-   above before the server starts.
-5. Trigger a deploy. Render will build the service and expose it at a `.onrender.com` URL.
+## License
 
-## Planned Features
-
-- Web interface built with [Flask](https://flask.palletsprojects.com/)
-- Task prioritization using the [Eisenhower Matrix](https://en.wikipedia.org/wiki/Time_management#The_Eisenhower_Method)
-- Additional productivity enhancements
-
-Contributions and feedback are welcome.
+This project is licensed under the [MIT License](LICENSE).
