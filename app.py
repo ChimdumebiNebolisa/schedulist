@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 import logging
 import os
 from functools import wraps
@@ -125,7 +125,10 @@ def index():
         for q in range(1, 5)
     }
     return render_template(
-        "index.html", tasks=tasks_by_quadrant, user=session.get("user")
+        "index.html",
+        tasks=tasks_by_quadrant,
+        user=session.get("user"),
+        today=date.today(),
     )
 
 
