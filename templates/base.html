@@ -68,7 +68,11 @@
     {% set current_endpoint = request.endpoint or '' %}
 
     <nav class="navbar navbar-expand-lg bg-white">
+
+        <div class="container align-items-center">
+
         <div class="container">
+
 
             <a class="navbar-brand fw-semibold" href="{{ url_for('index') }}">
               {% if user and user.get('name') %}
@@ -78,10 +82,19 @@
               {% endif %}
             </a>
 
+            {% if user and user.get('name') %}
+            <div class="navbar-title-mobile d-lg-none flex-grow-1 fw-semibold text-center">
+                Schedulist
+            </div>
+            {% endif %}
+            <div class="d-flex align-items-center gap-2 ms-auto d-lg-none mobile-actions">
+
+
             <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">Schedulist</a>
 
 
             <div class="d-flex align-items-center gap-2 ms-auto d-lg-none">
+
                 <button
                     type="button"
                     class="btn btn-outline-secondary btn-sm theme-toggle"
@@ -107,6 +120,7 @@
 
 
 
+
             <button
                 class="navbar-toggler"
                 type="button"
@@ -118,6 +132,7 @@
             >
                 <span class="navbar-toggler-icon"></span>
             </button>
+
 
 
             <div class="collapse navbar-collapse" id="navbarNav">
