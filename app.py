@@ -112,6 +112,11 @@ def root():
     return "Server is running"
 
 
+@app.route("/healthz")
+def healthcheck():
+    return "ok", 200
+
+
 @app.route("/dashboard")
 @login_required
 def index():
