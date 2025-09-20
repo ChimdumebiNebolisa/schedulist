@@ -11,6 +11,24 @@ body.dashboard-bg {
     color: #f5f3ff;
 }
 
+
+.dashboard-hero-image {
+    display: block;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0.75rem;
+    border-radius: 1.5rem;
+    box-sizing: border-box;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.75));
+    box-shadow: 0 1.75rem 3.5rem rgba(15, 23, 42, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+}
+
+html[data-bs-theme="dark"] .dashboard-hero-image {
+    background: linear-gradient(135deg, rgba(61, 38, 120, 0.75), rgba(88, 70, 146, 0.65));
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 1.75rem 3.5rem rgba(2, 6, 23, 0.65);
+
 html[data-bs-theme="light"] body.dashboard-bg .text-muted {
     color: #d7d2ff !important;
 }
@@ -39,6 +57,7 @@ html[data-bs-theme="light"] body.dashboard-bg .btn-outline-secondary:focus {
     color: #1b0e3f;
     background-color: rgba(239, 234, 255, 0.9);
     border-color: rgba(239, 234, 255, 0.9);
+
 }
 
 body.page-transition {
