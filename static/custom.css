@@ -11,6 +11,36 @@ body.dashboard-bg {
     color: #f5f3ff;
 }
 
+html[data-bs-theme="light"] body.dashboard-bg .text-muted {
+    color: #d7d2ff !important;
+}
+
+html[data-bs-theme="light"] body.dashboard-bg .btn-primary {
+    color: #1b0e3f;
+    background-color: #d4c5ff;
+    border-color: #c6b3ff;
+}
+
+html[data-bs-theme="light"] body.dashboard-bg .btn-primary:hover,
+html[data-bs-theme="light"] body.dashboard-bg .btn-primary:focus {
+    color: #140a32;
+    background-color: #c5b3ff;
+    border-color: #b7a1ff;
+}
+
+html[data-bs-theme="light"] body.dashboard-bg .btn-outline-secondary {
+    color: #efeaff;
+    border-color: rgba(239, 234, 255, 0.75);
+    background-color: transparent;
+}
+
+html[data-bs-theme="light"] body.dashboard-bg .btn-outline-secondary:hover,
+html[data-bs-theme="light"] body.dashboard-bg .btn-outline-secondary:focus {
+    color: #1b0e3f;
+    background-color: rgba(239, 234, 255, 0.9);
+    border-color: rgba(239, 234, 255, 0.9);
+}
+
 body.page-transition {
     opacity: 0;
     transition: opacity 0.25s ease;
