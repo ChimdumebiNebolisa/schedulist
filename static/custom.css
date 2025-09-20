@@ -5,6 +5,12 @@ body {
     color: var(--bs-body-color);
 }
 
+body.dashboard-bg {
+    background: #281856;
+    background-color: #281856;
+    color: #f5f3ff;
+}
+
 body.page-transition {
     opacity: 0;
     transition: opacity 0.25s ease;
