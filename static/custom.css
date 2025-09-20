@@ -6,9 +6,9 @@ body {
 }
 
 body.dashboard-bg {
-    background: none;
-    background-color: #8329AC;
-    color: #ffffff;
+    background: #281856;
+    background-color: #281856;
+    color: #f5f3ff;
 }
 
 body.page-transition {
@@ -36,9 +36,9 @@ html[data-bs-theme="dark"] body {
 }
 
 html[data-bs-theme="dark"] body.dashboard-bg {
-    background: none;
-    background-color: #8329AC;
-    color: #ffffff;
+    background: #281856;
+    background-color: #281856;
+    color: #f5f3ff;
 }
 
 main {
