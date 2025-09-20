@@ -5,6 +5,19 @@ body {
     color: var(--bs-body-color);
 }
 
+body.page-transition {
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+body.page-transition.is-visible {
+    opacity: 1;
+}
+
+body.page-transition.is-exiting {
+    opacity: 0;
+}
+
 [data-bs-theme="dark"] body {
     background: #121212;
     background-color: #121212;
@@ -126,6 +139,9 @@ main {
     display: flex;
     flex-direction: column;
     height: 100%;
+    animation: cardEntry 0.45s ease both;
+    animation-delay: calc(0.05s * var(--card-index, 0));
+    will-change: opacity, transform;
 }
 
 [data-bs-theme="dark"] .quadrant-card {
@@ -226,6 +242,9 @@ main {
     border-radius: 1rem;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     background-color: var(--bs-card-bg);
+    animation: taskCardEntry 0.4s ease both;
+    animation-delay: calc(0.04s * var(--task-index, 0));
+    will-change: opacity, transform;
 }
 
 .task-card .card-body {
@@ -258,6 +277,7 @@ main {
     align-items: center;
     justify-content: center;
     gap: 0.75rem;
+    animation: emptyStateFadeIn 0.45s ease 0.3s both;
 }
 
 .empty-state-card i {
@@ -289,6 +309,36 @@ main {
     z-index: 1030;
 }
 
+.empty-state-add-btn {
+    animation: emptyStatePulse 3s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.action-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease;
+    will-change: transform;
+}
+
+.btn:hover .action-icon,
+.btn:focus-visible .action-icon,
+.nav-link:hover .action-icon,
+.nav-link:focus-visible .action-icon,
+.fab:hover .action-icon,
+.fab:focus-visible .action-icon {
+    transform: scale(1.1);
+}
+
+.action-icon.is-popping {
+    animation: iconPop 0.3s ease;
+}
+
+.badge-status {
+    animation: badgeReveal 0.3s ease both;
+}
+
 .fab:hover {
     transform: translateY(-4px);
     box-shadow: 0 1.5rem 3rem rgba(13, 110, 253, 0.35);
@@ -317,5 +367,97 @@ main {
 
     .navbar .nav-link.active::after {
         bottom: -0.2rem;
+    }
+}
+
+@keyframes cardEntry {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes taskCardEntry {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes badgeReveal {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes emptyStateFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes emptyStatePulse {
+    0% {
+        transform: scale(1.05);
+    }
+
+    50% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes iconPop {
+    0% {
+        transform: scale(1);
+    }
+
+    40% {
+        transform: scale(1.18);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.page-transition {
+        transition-duration: 0.01ms !important;
+    }
+
+    .quadrant-card,
+    .task-card,
+    .badge-status,
+    .empty-state-card,
+    .empty-state-add-btn,
+    .action-icon {
+        animation: none !important;
+        transition-duration: 0.01ms !important;
     }
 }
