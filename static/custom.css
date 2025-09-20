@@ -6,9 +6,9 @@ body {
 }
 
 body.dashboard-bg {
-    background: #281856;
-    background-color: #281856;
-    color: #f5f3ff;
+    background: none;
+    background-color: #8329AC;
+    color: #ffffff;
 }
 
 body.page-transition {
@@ -33,6 +33,12 @@ body.page-transition.is-exiting {
 html[data-bs-theme="dark"] body {
     background: linear-gradient(180deg, #0f172a 0%, #111827 40%, #0b1120 100%);
     color: #e0e0e0;
+}
+
+html[data-bs-theme="dark"] body.dashboard-bg {
+    background: none;
+    background-color: #8329AC;
+    color: #ffffff;
 }
 
 main {
