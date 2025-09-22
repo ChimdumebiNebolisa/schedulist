@@ -23,9 +23,6 @@ The project doubles as a playground for sharpening full-stack habits—automatin
 - Bootstrap 5
 - Render hosting
 
-## 🖼 Screenshot
-![Schedulist Dashboard](static/img/hero.png)
-
 ## ⚙️ Setup Instructions
 ### Prerequisites
 - Python 3.11+
@@ -65,7 +62,7 @@ flask db upgrade
 flask run
 ```
 
-## 🧩 Architecture (Optional)
+## 🧩 Architecture
 ```
 [User] → [Flask Routes] → [PostgreSQL]
    ↘
