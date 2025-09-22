@@ -73,15 +73,9 @@
 
     <nav class="navbar navbar-expand-lg bg-white">
         <div class="container align-items-center">
-            <a class="navbar-brand fw-semibold" href="{{ url_for('index') }}">
+            <a class="navbar-brand fw-semibold mx-auto mx-lg-0 text-center text-lg-start" href="{{ url_for('index') }}">
                 Schedulist
             </a>
-
-            {% if user and user.get('name') %}
-                <div class="navbar-title-mobile d-lg-none flex-grow-1 fw-semibold text-center">
-                    Schedulist
-                </div>
-            {% endif %}
 
             <div class="d-flex align-items-center gap-2 ms-auto d-lg-none">
                 <button
