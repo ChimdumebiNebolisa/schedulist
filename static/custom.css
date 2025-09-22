@@ -167,7 +167,7 @@ html[data-bs-theme="dark"] .btn-outline-secondary:focus-visible {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.75));
     box-shadow: 0 1.75rem 3.5rem rgba(15, 23, 42, 0.35);
     border: 1px solid rgba(255, 255, 255, 0.55);
-    transform: rotate(30deg);
+    transform: rotate(0deg);
     transform-origin: center;
 }
 
