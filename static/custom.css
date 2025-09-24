@@ -293,12 +293,13 @@ main {
 }
 
 .quadrant-card {
-    border: 1px solid rgba(17, 24, 39, 0.08);
-    border-radius: 1rem;
-    box-shadow: 0 1.5rem 3rem rgba(17, 24, 39, 0.08);
-    overflow: hidden;
-    background-color: #f9fafb;
-    color: #111827;
+    position: relative;
+    border-radius: 1.35rem;
+    border: 1px solid var(--quadrant-border, rgba(17, 24, 39, 0.08));
+    background: var(--quadrant-surface, #f9fafb);
+    color: var(--quadrant-text, #111827);
+    box-shadow: 0 1.65rem 3.2rem rgba(15, 23, 42, 0.08);
+    overflow: visible;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -307,27 +308,162 @@ main {
     will-change: opacity, transform;
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease,
         box-shadow 0.3s ease;
+    --quadrant-divider: rgba(17, 24, 39, 0.08);
+    --quadrant-divider-dark: rgba(249, 250, 251, 0.12);
+    --quadrant-accent: #111827;
+    --quadrant-accent-soft: rgba(17, 24, 39, 0.75);
+    --quadrant-accent-dark: #f9fafb;
+    --quadrant-shadow: rgba(15, 23, 42, 0.18);
+    --quadrant-shadow-dark: rgba(0, 0, 0, 0.35);
+    --quadrant-progress-track: rgba(17, 24, 39, 0.08);
+    --quadrant-progress-track-dark: rgba(249, 250, 251, 0.12);
+    --quadrant-progress-text: #f9fafb;
+    --quadrant-progress-text-dark: #111827;
+    --bs-card-bg: var(--quadrant-surface, #f9fafb);
+    --bs-card-color: var(--quadrant-text, #111827);
+    --bs-card-border-color: var(--quadrant-border, rgba(17, 24, 39, 0.08));
+    --bs-card-cap-bg: var(--quadrant-surface, #f9fafb);
+    --bs-card-cap-color: var(--quadrant-text, #111827);
+}
+
+.quadrant-card::after {
+    content: "";
+    position: absolute;
+    inset: auto 1.35rem -1.8rem 1.35rem;
+    height: 2.75rem;
+    background: radial-gradient(
+        62% 62% at 50% 0%,
+        var(--quadrant-shadow) 0%,
+        rgba(15, 23, 42, 0)
+    );
+    z-index: -1;
+    opacity: 0.8;
 }
 
 html[data-bs-theme="dark"] .quadrant-card {
-    background-color: #1f2937;
-    border: 1px solid rgba(249, 250, 251, 0.12);
-    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.45);
-    color: #f9fafb;
+    background: var(--quadrant-surface-dark, #1f2937);
+    border: 1px solid var(--quadrant-border-dark, rgba(249, 250, 251, 0.12));
+    box-shadow: 0 1.8rem 3.4rem rgba(0, 0, 0, 0.45);
+    color: var(--quadrant-text-dark, #f9fafb);
+    --bs-card-bg: var(--quadrant-surface-dark, #1f2937);
+    --bs-card-color: var(--quadrant-text-dark, #f9fafb);
+    --bs-card-border-color: var(--quadrant-border-dark, rgba(249, 250, 251, 0.12));
+    --bs-card-cap-bg: var(--quadrant-surface-dark, #1f2937);
+    --bs-card-cap-color: var(--quadrant-text-dark, #f9fafb);
 }
 
-.quadrant-card .card-header {
-    border-bottom: 1px solid rgba(17, 24, 39, 0.08);
-    padding: 1rem 1.5rem;
+html[data-bs-theme="dark"] .quadrant-card::after {
+    background: radial-gradient(
+        62% 62% at 50% 0%,
+        var(--quadrant-shadow-dark) 0%,
+        rgba(15, 23, 42, 0)
+    );
+    opacity: 0.9;
+}
+
+.quadrant-card__header {
+    padding: 1.25rem 1.5rem 1rem;
     font-weight: 600;
+    border-bottom: 1px solid var(--quadrant-divider);
+    background-color: transparent;
+    color: var(--quadrant-heading, var(--quadrant-text));
 }
 
-html[data-bs-theme="dark"] .quadrant-card .card-header {
-    border-bottom: 1px solid rgba(249, 250, 251, 0.12);
+html[data-bs-theme="dark"] .quadrant-card__header {
+    border-bottom-color: var(--quadrant-divider-dark);
+    color: var(--quadrant-heading-dark, var(--quadrant-text-dark));
 }
 
 .quadrant-card .quadrant-icon {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
+    filter: drop-shadow(0 6px 12px rgba(15, 23, 42, 0.12));
+}
+
+.quadrant-card h5 {
+    color: inherit;
+}
+
+.quadrant-theme-1 {
+    --quadrant-surface: #fff5f5;
+    --quadrant-border: rgba(248, 113, 113, 0.4);
+    --quadrant-text: #7f1d1d;
+    --quadrant-heading: #991b1b;
+    --quadrant-divider: rgba(248, 113, 113, 0.35);
+    --quadrant-accent: #dc2626;
+    --quadrant-accent-soft: #fb7185;
+    --quadrant-shadow: rgba(220, 38, 38, 0.22);
+    --quadrant-progress-track: rgba(220, 38, 38, 0.12);
+    --quadrant-surface-dark: rgba(127, 29, 29, 0.45);
+    --quadrant-border-dark: rgba(248, 113, 113, 0.45);
+    --quadrant-text-dark: #fee2e2;
+    --quadrant-heading-dark: #fecaca;
+    --quadrant-divider-dark: rgba(248, 113, 113, 0.35);
+    --quadrant-accent-dark: #fca5a5;
+    --quadrant-shadow-dark: rgba(248, 113, 113, 0.35);
+    --quadrant-progress-track-dark: rgba(248, 113, 113, 0.18);
+    --quadrant-progress-text-dark: #111827;
+}
+
+.quadrant-theme-2 {
+    --quadrant-surface: #eef2ff;
+    --quadrant-border: rgba(129, 140, 248, 0.45);
+    --quadrant-text: #1e3a8a;
+    --quadrant-heading: #1d4ed8;
+    --quadrant-divider: rgba(129, 140, 248, 0.35);
+    --quadrant-accent: #3b82f6;
+    --quadrant-accent-soft: #60a5fa;
+    --quadrant-shadow: rgba(59, 130, 246, 0.22);
+    --quadrant-progress-track: rgba(59, 130, 246, 0.15);
+    --quadrant-surface-dark: rgba(30, 64, 175, 0.45);
+    --quadrant-border-dark: rgba(147, 197, 253, 0.45);
+    --quadrant-text-dark: #e2e8f0;
+    --quadrant-heading-dark: #bfdbfe;
+    --quadrant-divider-dark: rgba(147, 197, 253, 0.35);
+    --quadrant-accent-dark: #93c5fd;
+    --quadrant-shadow-dark: rgba(147, 197, 253, 0.35);
+    --quadrant-progress-track-dark: rgba(147, 197, 253, 0.2);
+}
+
+.quadrant-theme-3 {
+    --quadrant-surface: #fff7ed;
+    --quadrant-border: rgba(253, 186, 116, 0.45);
+    --quadrant-text: #9a3412;
+    --quadrant-heading: #c2410c;
+    --quadrant-divider: rgba(253, 186, 116, 0.35);
+    --quadrant-accent: #f97316;
+    --quadrant-accent-soft: #fb923c;
+    --quadrant-shadow: rgba(249, 115, 22, 0.2);
+    --quadrant-progress-track: rgba(249, 115, 22, 0.15);
+    --quadrant-surface-dark: rgba(154, 52, 18, 0.45);
+    --quadrant-border-dark: rgba(253, 186, 116, 0.45);
+    --quadrant-text-dark: #ffedd5;
+    --quadrant-heading-dark: #fed7aa;
+    --quadrant-divider-dark: rgba(253, 186, 116, 0.35);
+    --quadrant-accent-dark: #fbbf24;
+    --quadrant-shadow-dark: rgba(253, 186, 116, 0.32);
+    --quadrant-progress-track-dark: rgba(253, 186, 116, 0.22);
+    --quadrant-progress-text-dark: #1f2937;
+}
+
+.quadrant-theme-4 {
+    --quadrant-surface: #ecfdf5;
+    --quadrant-border: rgba(134, 239, 172, 0.45);
+    --quadrant-text: #166534;
+    --quadrant-heading: #15803d;
+    --quadrant-divider: rgba(74, 222, 128, 0.35);
+    --quadrant-accent: #16a34a;
+    --quadrant-accent-soft: #34d399;
+    --quadrant-shadow: rgba(22, 163, 74, 0.2);
+    --quadrant-progress-track: rgba(74, 222, 128, 0.18);
+    --quadrant-surface-dark: rgba(22, 101, 52, 0.55);
+    --quadrant-border-dark: rgba(134, 239, 172, 0.45);
+    --quadrant-text-dark: #d1fae5;
+    --quadrant-heading-dark: #bbf7d0;
+    --quadrant-divider-dark: rgba(134, 239, 172, 0.35);
+    --quadrant-accent-dark: #4ade80;
+    --quadrant-shadow-dark: rgba(134, 239, 172, 0.3);
+    --quadrant-progress-track-dark: rgba(134, 239, 172, 0.2);
+    --quadrant-progress-text-dark: #0b1120;
 }
 
 .quadrant-card .card-body {
@@ -335,42 +471,40 @@ html[data-bs-theme="dark"] .quadrant-card .card-header {
     flex-direction: column;
     gap: 1.5rem;
     flex-grow: 1;
+    padding: 1rem 1.5rem 1.75rem;
 }
 
 .task-list {
     flex-grow: 1;
 }
 
-.progress {
+.quadrant-card__progress {
     border-radius: 999px;
-    background-color: rgba(17, 24, 39, 0.08);
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+    background-color: var(--quadrant-progress-track);
+    border: none;
 }
 
-html[data-bs-theme="dark"] .progress {
-    background-color: rgba(249, 250, 251, 0.1);
-    border: 1px solid rgba(249, 250, 251, 0.12);
-}
-
-.progress-bar {
+.quadrant-card__progress .progress-bar {
     border-radius: 999px;
+    background: linear-gradient(
+        90deg,
+        var(--quadrant-accent),
+        var(--quadrant-accent-soft)
+    );
+    color: var(--quadrant-progress-text);
 }
 
-[data-bs-theme="dark"] .progress-bar.bg-danger {
-    background-color: #a61d2d !important;
+html[data-bs-theme="dark"] .quadrant-card__progress {
+    background-color: var(--quadrant-progress-track-dark);
 }
 
-[data-bs-theme="dark"] .progress-bar.bg-primary {
-    background-color: #0a58ca !important;
-}
-
-[data-bs-theme="dark"] .progress-bar.bg-warning {
-    background-color: #b8860b !important;
-    color: #1e1e1e;
-}
-
-[data-bs-theme="dark"] .progress-bar.bg-success {
-    background-color: #0f5132 !important;
+html[data-bs-theme="dark"] .quadrant-card__progress .progress-bar {
+    background: linear-gradient(
+        90deg,
+        var(--quadrant-accent-dark, var(--quadrant-accent)),
+        var(--quadrant-accent)
+    );
+    color: var(--quadrant-progress-text-dark);
 }
 
 .card {
