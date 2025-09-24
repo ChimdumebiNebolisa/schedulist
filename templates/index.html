@@ -14,21 +14,21 @@
 </div>
 
 {% set quadrants = [
-    (1, 'Urgent & Important', 'bg-danger text-white', 'bg-danger', '⏰'),
-    (2, 'Not Urgent & Important', 'bg-primary text-white', 'bg-primary', '⭐'),
-    (3, 'Urgent & Not Important', 'bg-warning text-dark', 'bg-warning', '⚡'),
-    (4, 'Not Urgent & Not Important', 'bg-success text-white', 'bg-success', '🌱')
+    (1, 'Urgent & Important', 'quadrant-theme-1', '⏰'),
+    (2, 'Not Urgent & Important', 'quadrant-theme-2', '⭐'),
+    (3, 'Urgent & Not Important', 'quadrant-theme-3', '⚡'),
+    (4, 'Not Urgent & Not Important', 'quadrant-theme-4', '🌱')
 ] %}
 
 <div class="row row-cols-1 row-cols-md-2 g-4 dashboard-grid">
-    {% for qid, title, header_class, progress_class, quadrant_icon in quadrants %}
+    {% for qid, title, theme_class, quadrant_icon in quadrants %}
     {% set quadrant_tasks = tasks.get(qid, []) %}
     {% set total_tasks = quadrant_tasks | length %}
     {% set completed_tasks = quadrant_tasks | selectattr('completed') | list | length %}
     {% set completion_percentage = (completed_tasks * 100 / total_tasks) | round(0, 'floor') if total_tasks else 0 %}
     <div class="col">
-        <div class="card quadrant-card h-100" style="--card-index: {{ loop.index0 }}">
-            <div class="card-header {{ header_class }} d-flex align-items-center justify-content-between">
+        <div class="card quadrant-card h-100 {{ theme_class }}" style="--card-index: {{ loop.index0 }}">
+            <div class="card-header quadrant-card__header d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center gap-2">
                     <span class="quadrant-icon" aria-hidden="true">{{ quadrant_icon }}</span>
                     <h5 class="mb-0">{{ title }} ({{ total_tasks }})</h5>
@@ -40,9 +40,9 @@
                         <span>{{ completed_tasks }} of {{ total_tasks }} completed</span>
                         <span>{{ completion_percentage }}%</span>
                     </div>
-                    <div class="progress" style="height: 0.5rem;">
+                    <div class="progress quadrant-card__progress" style="height: 0.5rem;">
                         <div
-                            class="progress-bar {{ progress_class }}"
+                            class="progress-bar"
                             role="progressbar"
                             style="width: {{ completion_percentage }}%"
                             aria-valuenow="{{ completion_percentage }}"
